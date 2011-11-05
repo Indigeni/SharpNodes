@@ -1,0 +1,27 @@
+{
+      "name": "sharpnodes"
+    , "version": "0.0.0"
+    , "description": "visualization of internet transparency problem around the world"
+    , "keywords": ["visualization", "internet", "transparency", "herdict", "opendata", "canvas", "paper.js"]
+    , "author": "Indigeni Digitali Team <team@indigenidigitali.com>"
+    , "contributors": [
+        { "name": "Matteo Collina", "email": "hello@matteocollina.com" }
+    ]
+    , "licenses": [{
+        "type": "Apache v2.0"
+      , "url": "https://github.com/Indigeni/SharpNodes/blob/master/LICENSE"
+    }]
+    , "repository": "https://github.com/Indigeni/SharpNodes"
+    , "dependencies": {
+        "coffee-script": "= 1.1.2"
+      , "express": "= 2.5.0"
+      , "mongoose": "= 2.3.9"
+    }
+    , "engines": {
+        "node": "= 0.4.12"
+    }
+    , "devDependencies": {
+        "jessie" : "= 0.3.7"
+      , "jezebel" : "= 0.3.2"
+    }
+}
