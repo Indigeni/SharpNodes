@@ -5,6 +5,13 @@ set :repository,  "git@github.com:Indigeni/SharpNodes.git"
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
+ip = ""
+
+role :web, ip 
+role :app, ip
+role :db, ip, :primary => true
+
+set :user, "ubuntu"
 
 set :port, 8000
 
