@@ -3,4 +3,8 @@ module.exports = (app) ->
     res.render('index.eco',
       layout: false
     )
+  
+  app.resource 'node', require '../modules/nodes'
+  
+  
 

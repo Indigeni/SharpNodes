@@ -1,0 +1,12 @@
+try mongoose and mongo
+==========================
+
+steps: 
+
+* create "sharpnodes" db in mongodb
+
+* create new nodes in mongo
+  http://localhost:3000/node/new with fixed data
+
+* fetch nodes in mongo
+  http://localhost:3000/node.json

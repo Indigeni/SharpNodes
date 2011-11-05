@@ -2,6 +2,7 @@
 
 # Module dependencies.
 
+resource = require 'express-resource'
 optimist = require 'optimist'
 express = require 'express'
 path = require 'path'
