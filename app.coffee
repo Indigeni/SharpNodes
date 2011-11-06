@@ -35,6 +35,7 @@ require.paths.unshift("app/controllers")
 require.paths.unshift("app/models")
 
 require('home_controller')(app)
+require('nodes_controller')(app)
 
 # Helpers
 
