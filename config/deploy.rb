@@ -5,20 +5,22 @@ set :repository,  "git@github.com:Indigeni/SharpNodes.git"
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-ip = ""
+ip = "178.79.185.173"
 
 role :web, ip 
 role :app, ip
 role :db, ip, :primary => true
 
-set :user, "ubuntu"
+set :user, "deploy"
 
-set :port, 8000
+set :use_sudo, false
+
+set :app_port, 8000
 
 # support for github
 ssh_options[:forward_agent] = true
 
-set :deploy_to, "/opt/apps/#{application}"
+set :deploy_to, "/home/deploy/apps/#{application}"
 
 # to avoid touching the public/javascripts public/images and public/stylesheets
 set :normalize_asset_timestamps, false
@@ -29,15 +31,19 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start do
-    run "forever start #{current_path}/app.js -p #{port}"
+    run "cd #{current_path} && forever start app.js -p #{app_port}"
   end
 
   task :stop do 
-    run "forever stop #{current_path}/app.js"
+    run "cd #{current_path} && forever stop app.js"
   end
 
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "forever restart #{current_path}/app.js"
+    run "cd #{current_path} && forever restart app.js"
+  end
+
+  task :migrate do
+    # do nothing here!!
   end
 end
 
@@ -51,5 +57,5 @@ namespace :dependencies do
   end
 end
 
-before "deploy:cold", "dependencies:install_forever"
+# before "deploy:cold", "dependencies:install_forever"
 after "deploy:update_code", "dependencies:install"
