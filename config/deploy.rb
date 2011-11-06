@@ -39,7 +39,8 @@ namespace :deploy do
   end
 
   task :restart, :roles => :app, :except => { :no_release => true } do
-    run "cd #{current_path} && forever restart app.js"
+    stop
+    start
   end
 
   task :migrate do
