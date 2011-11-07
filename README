@@ -11,6 +11,13 @@ steps:
 * fetch nodes in mongo
   http://localhost:3000/nodes.json
 
+start tests
+===========
+
+1. mongod --dbpath data
+2. node app.js
+3. jake spec
+
 how to deploy
 =============
 
@@ -18,3 +25,5 @@ how to deploy
 2. `gem install capistrano` (use sudo if it give errors)
 3. `cd SharpNodes`
 4. `cap deploy`
+
+
