@@ -21,6 +21,8 @@
       , "eco": "= 1.1.0-rc-1"
       , "util": "= 0.4.9"
       , "underscore": "= 1.2.1"
+      , "async": "= 0.1.15"
+      , "jasmine-node": "= 1.0.12"
     }
     , "engines": {
         "node": "= 0.4.12"
