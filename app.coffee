@@ -8,6 +8,7 @@ express = require 'express'
 path = require 'path'
 eco = require 'eco'
 fs = require 'fs'
+mongoose = require 'mongoose'
 
 # Create Server
 
@@ -35,7 +36,10 @@ require.paths.unshift("app/controllers")
 require.paths.unshift("app/models")
 
 require('home_controller')(app)
+require('site_controller')(app)
 require('nodes_controller')(app)
+
+require 'site'
 
 # Helpers
 
@@ -64,6 +68,7 @@ start = module.exports.start = (opts={}) ->
     optionParser.showHelp()
     return 1
 
+  mongoose.connect db
   app.listen(port)
   console.log("SharpNodes server listening on port %d in %s mode", app.address().port, app.settings.env)
 

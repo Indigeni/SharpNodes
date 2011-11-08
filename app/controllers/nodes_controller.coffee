@@ -2,10 +2,8 @@ util = require 'util'
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
-db = mongoose.connect 'mongodb://localhost/sharpnodes'
-
 require 'node'
-Node = db.model 'Nodes'
+Node = mongoose.model 'Nodes'
 
 controller = {}
 

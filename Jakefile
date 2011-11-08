@@ -42,11 +42,11 @@ task({"start": []}, function() {
 desc("Start the app for the tests")
 task({"tests-start": []}, function() {
   var app = require('./app.coffee');
-  app.start({ "port": 3000, "db": y });
+  app.start({ "port": 3000, "db": 'mongodb://localhost/sharpnodes_test' });
 })
 
 desc("Run all specs")
-task({"spec": ["start"]}, function() {
+task({"spec": ["tests-start"]}, function() {
   var path = require("path"),
       jasmine = require("./spec/lib/jasmine-node"),
       specFolderPath = path.join(ROOT_DIRECTORY, "spec", "src"),
@@ -68,6 +68,8 @@ task({"spec": ["start"]}, function() {
 
   jasmine = require("./spec/lib/jasmine-request")(jasmine)
   jasmine.request.target(SHARPNODES.url)
+
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 500;
 
   for (var key in jasmine) global[key] = jasmine[key]
   jasmine.executeSpecsInFolder(specFolderPath, function(runner, log) {
