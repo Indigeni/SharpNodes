@@ -9,8 +9,6 @@ var fs = require("fs"),
 
 require("coffee-script")
 
-jake = require("./lib/jake-spawner")(jake)
-
 var ROOT_DIRECTORY = path.normalize(__dirname)
 var WORK_DIRECTORY = path.join(ROOT_DIRECTORY, ".work")
 var RUN_DIRECTORY = path.join(WORK_DIRECTORY, "pid")
