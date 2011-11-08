@@ -54,14 +54,18 @@ optionParser = optimist.default('port', 3000).
 
 argv = optionParser.argv
 
-start = module.exports.start = (port = argv.port) ->
+default_db = 'mongodb://localhost/sharpnodes'
+
+start = module.exports.start = (opts={}) ->
+  db = opts.db || default_db
+  port = opts.port || argv.port
+
   if argv.help
     optionParser.showHelp()
     return 1
 
   app.listen(port)
   console.log("SharpNodes server listening on port %d in %s mode", app.address().port, app.settings.env)
-
 
 if path.resolve(argv["$0"].split(' ')[1]) == path.resolve(__filename)
   start()

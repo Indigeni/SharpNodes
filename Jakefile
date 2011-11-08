@@ -36,7 +36,13 @@ var MONGO = {
 desc("Start the app on port 3000")
 task({"start": []}, function() {
   var app = require('./app.coffee');
-  app.start(3000);
+  app.start({ "port": 3000 });
+})
+
+desc("Start the app for the tests")
+task({"tests-start": []}, function() {
+  var app = require('./app.coffee');
+  app.start({ "port": 3000, "db": y });
 })
 
 desc("Run all specs")
