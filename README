@@ -15,8 +15,7 @@ start tests
 ===========
 
 1. mongod --dbpath data
-2. node app.js
-3. jake spec
+2. jake spec
 
 how to deploy
 =============

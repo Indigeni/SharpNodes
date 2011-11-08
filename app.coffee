@@ -54,12 +54,12 @@ optionParser = optimist.default('port', 3000).
 
 argv = optionParser.argv
 
-start = module.exports.start = ->
+start = module.exports.start = (port = argv.port) ->
   if argv.help
     optionParser.showHelp()
     return 1
 
-  app.listen(argv.port)
+  app.listen(port)
   console.log("SharpNodes server listening on port %d in %s mode", app.address().port, app.settings.env)
 
 
