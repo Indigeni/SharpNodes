@@ -2,7 +2,6 @@
 
 # Module dependencies.
 
-resource = require 'express-resource'
 optimist = require 'optimist'
 express = require 'express'
 path = require 'path'
@@ -37,7 +36,6 @@ require.paths.unshift("app/models")
 
 require('home_controller')(app)
 require('site_controller')(app)
-require('nodes_controller')(app)
 
 require 'site'
 
