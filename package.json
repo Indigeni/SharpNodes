@@ -15,20 +15,20 @@
     , "dependencies": {
         "coffee-script": "= 1.1.2"
       , "express": "= 2.5.0"
-      , "express-resource": "=0.2.3"
+      , "express-resource": "= 0.2.3"
       , "mongoose": "= 2.3.9"
       , "optimist": "= 0.2.8"
       , "eco": "= 1.1.0-rc-1"
       , "util": "= 0.4.9"
       , "underscore": "= 1.2.1"
       , "async": "= 0.1.15"
-      , "jasmine-node": "= 1.0.12"
     }
     , "engines": {
         "node": "= 0.4.12"
     }
     , "devDependencies": {
-        "jessie" : "= 0.3.7"
-      , "jezebel" : "= 0.3.2"
+        "request": "= 2.2.0"
+      , "handlebars": "= 1.0.2beta"
+      , "jasmine-node": "= 1.0.12"
     }
 }
