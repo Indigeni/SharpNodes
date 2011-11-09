@@ -355,22 +355,21 @@ function cleanUp() {
 
 function addSiteNode(site) {
 
-	//console.log("add site node: " + site);
-
 	cleanUp();
-
-	mainNode = createNode(siteType,site.siteNode,new Point(0,0),defaultRadius,"grey");
+	mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius,"grey");
 
 }
 
 function addCountryForSite(countryData) {
 
-	var countryNode = createNode(countryType,countryData.country,new Point(0,0),defaultRadius);
+	var countryCenter = nodes[mainNode].node.position + [1,1];
+	var countryNode = createNode(
+		countryType,countryData.country,countryCenter,defaultRadius);
 	createEdge(mainNode,countryNode,defaultLength);
 	var isps = countryData.isps;
 	for(var i=0; i<isps.length; i++) {
 		var isp = isps[i];
-		var ispNode = createNode(ispType,isp,new Point(i,i),defaultRadius);
+		var ispNode = createNode(ispType,isp,countryCenter + [i,i],defaultRadius);
 		createEdge(countryNode,ispNode,defaultLength);
 	}
 
@@ -452,7 +451,7 @@ function onMouseUp(event) {
 
 
 
-populateGraph();
+//populateGraph();
 
 
 
