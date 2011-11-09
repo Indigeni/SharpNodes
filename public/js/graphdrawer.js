@@ -83,12 +83,12 @@ var hitOptions = {
 
 var centerOfScreen = view.center; // once for all! for scrolling and stuff.
 var maxDistanceForRepulsiveCharges = 800;
-var repulsionConstant = 3.0;
+var repulsionConstant = 6.0;
 var attractionConstant = 0.002;
 var springConstant = 0.05;
 var centerAttractionTolerance = 50;
 var defaultRadius = 30;
-var defaultLength = 150;
+var defaultLength = 200;
 
 var maxNumberOfISPsPerCountry = 4;
 
@@ -207,8 +207,10 @@ function updateNode(nodeID, delta) {
 	var node = nodes[nodeID].node;
 	var text = nodes[nodeID].text;
 	var circle = nodes[nodeID].circle;
+	var textContainer = nodes[nodeID].textContainer;
 	node.position += delta;
 	text.position += delta;
+	textContainer.position += delta;
 	if(circle)
 		circle.position += delta;
 
@@ -216,18 +218,46 @@ function updateNode(nodeID, delta) {
 
 function createNodeAsync(type, nodeData, center, radius, callback, color) {
 
+	var pathName = type + sep + nodeData.name;
+	
+	if(nodes[pathName]!=null) {
+		callback(null);
+		return;
+	}
+
 	console.log("creating node from image: " + type,nodeData);
 
 	var text = new PointText(center);
 	text.justification = "center";
 	text.characterStyle = {
+		font: "helvetica",
     	fontSize: 20,
-    	fillColor: "red",
+    	fillColor: "white"
 	};
 	text.content = nodeData.name;
+	text.selected = true;
+	text.selected = false;
+	
+	
+	// very low level text container .......
+	var strlen = text.content.length;
+	var width = 20 * strlen * 0.8, height = 32;
+	var p1 = new Point(center.x-width/2,center.y-height*2/3),
+		p2 = new Point(center.x+width/2,center.y+height*1/3);
+	
+	console.log("building text container with point, size:",text.bounds.point,text.bounds.size);
+	
+	//var textContainer = new Path.RoundRectangle(new Path.Rectangle(p1,p2),new Size(10,10));
+	var textContainer = new Path.Rectangle(p1,p2);
+	textContainer.fillColor = "black";
+	textContainer.opacity = 0.5;
+	textContainer.name = pathName;
+
+
+	console.log("textContainer",textContainer);
 	
 	var path = null;
-	var pathName = type + sep + nodeData.name;
+	
 	text.name = pathName;
 	var imgPath = null;
 	if(type == countryType)
@@ -247,8 +277,14 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
   		path.position = center;
   		path.scale(radius*2.2/path.bounds.width);
   		path.opacity = 0.9;
-  		console.log("inserting text above path? " + path.insertBelow(text));
+  		
   		path.name = pathName;
+  		
+  		textContainer.insertAbove(path);
+  		text.insertAbove(textContainer);
+  		//console.log("inserting text above path? " + text.insertAbove(path));
+  		
+  		//textContainer.insertBelow(text);
   		
   		var circle = new Path.Circle(center,radius);
   		circle.opacity = 0.1;
@@ -263,21 +299,26 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 			type: type,
 			charge: radius,
 			r: radius,
-			text: text
+			text: text,
+			textContainer: textContainer
 		};
   		img.remove();
   		callback(pathName);
   		
 	});
-	
-	//return pathName;
+
 
 }
 
 function createNode(type, id, center, radius, color) {
 
-	var path = new Path.Circle(center, radius);
 	var pathName = type + sep + id;
+	
+	if(nodes[pathName]!=null)
+		return null;
+
+	var path = new Path.Circle(center, radius);
+	
 	if(color) {
 		path.fillColor = color;
 		path.strokeColor = color;
@@ -293,12 +334,28 @@ function createNode(type, id, center, radius, color) {
 	var text = new PointText(center);
 	text.justification = "center";
 	text.characterStyle = {
+		font: "helvetica",
     	fontSize: type == ispType ? 10 : 20,
-    	fillColor: "red",
+    	fillColor: "white"
 	};
 	text.content = content;
 	
+	
+		
+	// very low level text container .......
+	var strlen = text.content.length;
+	var width = (ispType ? 10 : 20) * strlen * 0.8, height = 32;
+	var p1 = new Point(center.x-width/2,center.y-height*2/3),
+		p2 = new Point(center.x+width/2,center.y+height*1/3);
+	
+	//var textContainer = new Path.RoundRectangle(new Path.Rectangle(p1,p2),new Size(10,10));
+	var textContainer = new Path.Rectangle(p1,p2);
+	textContainer.fillColor = "black";
+	textContainer.opacity = 0.5;
+	textContainer.name = pathName;
+	
 	console.log("inserting text above path? " + path.insertBelow(text));
+	textContainer.insertBelow(text);
 	
 	//var path = null;
 	
@@ -308,7 +365,8 @@ function createNode(type, id, center, radius, color) {
 			type: type,
 			charge: radius,
 			r: radius,
-			text: text
+			text: text,
+			textContainer: textContainer
 	};
 	
 	return pathName;
@@ -440,6 +498,14 @@ function updateEdge(parentNodeID, childNodeID, deltas) {
 	updatedPath.strokeColor = edges[firstNodeID][secondNodeID].color;
 	updatedPath.name = edgeType + sep + firstNodeID + sep + secondNodeID;
 	edges[firstNodeID][secondNodeID].edge = updatedPath;
+	
+	nodes[firstNodeID].node.insertAbove(updatedPath);
+	nodes[firstNodeID].textContainer.insertAbove(nodes[firstNodeID].node);
+	nodes[firstNodeID].text.insertAbove(nodes[firstNodeID].textContainer);
+	
+	nodes[secondNodeID].node.insertAbove(updatedPath);
+	nodes[secondNodeID].textContainer.insertAbove(nodes[secondNodeID].node);
+	nodes[secondNodeID].text.insertAbove(nodes[secondNodeID].textContainer);
 
 }
 
@@ -451,6 +517,7 @@ function handleNodeDrag(node,delta) {
 	// TODO
 	nodes[name].node.position += delta;
 	nodes[name].text.position += delta;
+	nodes[name].textContainer.position += delta;
 	if(nodes[name].circle)
 		nodes[name].circle.position += delta;
 
@@ -501,6 +568,9 @@ function cleanUp() {
 	for(var node in nodes) {
 		nodes[node].node.remove();
 		nodes[node].text.remove();
+		nodes[node].textContainer.remove();
+		if(nodes[node].circle!=null)
+			nodes[node].circle.remove();
 		delete nodes[node];
 	}
 	for(var node in edges) {
@@ -521,14 +591,12 @@ function addSiteNode(site) {
 
 	cleanUp();
 	
-	createNodeAsync(siteType,{name: site.siteNode},view.center,defaultRadius,function(siteNode){
+	createNodeAsync(siteType,{name: site.siteNode},view.center,defaultRadius*1.5,function(siteNode){
 		mainNode = siteNode;
 	},"grey");
 	
 	console.log("nodes with just main node",nodes);
 	
-	//mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius*1.5,"grey");
-
 }
 
 function addCountryForSite(countryData) {
@@ -538,7 +606,8 @@ function addCountryForSite(countryData) {
 	//	countryType,countryData.country,countryCenter,defaultRadius,'grey');
 		
 		
-	createNodeAsync(countryType,{name: countryData.country, flag: countryData.countryFlag},countryCenter,defaultRadius,function(countryNode) {
+	createNodeAsync(countryType,{name: countryData.country, 
+		flag: countryData.countryFlag},countryCenter,defaultRadius,function(countryNode) {
 	
 		console.log(countryNode);
 	
@@ -551,8 +620,17 @@ function addCountryForSite(countryData) {
 			if(isp=="null")
 				continue;
 			var ispNode = createNode(ispType,isp,
-				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius,"grey");
+				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius*0.8,"grey");
+			if(ispNode==null)
+				continue;
 			createEdge(countryNode,ispNode,defaultLength,'LightGrey');
+		}
+		
+		var ispsLeft = isps.length - maxNumberOfISPsPerCountry;
+		if(ispsLeft > 0) {
+			var leftIspsNode = createNode(ispType,"...and " + ispsLeft + " more",
+				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius*1.2,"grey");
+			createEdge(countryNode,leftIspsNode,defaultLength,'LightGrey');
 		}
 		
 		console.log("nodes with country " + countryNode, nodes);
@@ -575,6 +653,9 @@ function removeCountryForSite(country) {
 		console.log(ispNode);
 		nodes[ispNode].node.remove();
 		nodes[ispNode].text.remove();
+		nodes[ispNode].textContainer.remove();
+		if(nodes[ispNode].circle!=null)
+			nodes[ispNode].circle.remove();
 		delete nodes[ispNode];
 		edges[countryNode][ispNode].edge.remove();
 		delete edges[countryNode][ispNode];
@@ -586,6 +667,9 @@ function removeCountryForSite(country) {
 	delete edges[mainNode][countryNode];
 	nodes[countryNode].node.remove();
 	nodes[countryNode].text.remove();
+	nodes[countryNode].textContainer.remove();
+		if(nodes[countryNode].circle!=null)
+			nodes[countryNode].circle.remove();
 	delete nodes[countryNode];
 	
 console.log(nodes, edges);
@@ -603,8 +687,13 @@ function onFrame(event) {
 		
 	var deltas = calculateDeltas();
 	
-	for(var node in nodes)
+	//console.log(event.count);
+	
+	for(var node in nodes) {
 		updateNode(node, deltas[node]);
+		if(event.count%100==0)
+			console.log(nodes[node].text.bounds);
+	}
 		
 	for(var node1 in edges)
 		for(var node2 in edges[node1])
