@@ -41,4 +41,4 @@ module.exports = (app) ->
     fetchImage(1024, 768, req, res, ( (domain) -> ["http://www.#{domain}", "/tmp/#{domain}.png"]))
 
   app.get '/site/:domain/icon', (req, res) ->
-    fetchImage(1024, 768, req, res, ( (domain) -> ["http://www.#{domain}/favicon.ico", "/tmp/#{domain}-ico.png"]))
+    fetchImage(16, 16, req, res, ( (domain) -> ["http://www.#{domain}/favicon.ico", "/tmp/#{domain}-ico.png"]))
