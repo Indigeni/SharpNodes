@@ -30,11 +30,11 @@
 	<!-- Load Google Bar Chart Core -->	
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script  type="text/javascript"> 
-	   google.load("visualization", "1", {packages:["corechart","gauge"]});
+	   google.load("visualization", "1", {packages:["corechart","gauge",]});
        google.setOnLoadCallback(drawChart);      
        
        var score = {political:0,social:0,security:0,tools:0};
-              
+       var transparencyScore = 10;
        function drawChart() {
                var data = new google.visualization.DataTable();
                data.addColumn('string', 'Theme');
@@ -54,17 +54,34 @@
                                  vAxis: {title: 'Theme', titleTextStyle: {color: 'red'}}
                                 });
        
+       
                var data2 = new google.visualization.DataTable();
                data2.addColumn('string', 'Label');
-               data2.addColumn('string', 'Value');
-               data2.addRows(1);
-               data2.setValue(0, 0, 'Transparency');
-               data2.setValue(0, 1, 'Low');
+               data2.addColumn('number', 'Value');
+               data2.addRows(3);
+               data2.setValue(0, 0, 'Transp. Alert');
+               data2.setValue(0, 1, transparencyScore);
        
-               var chart = new google.visualization.Gauge(document.getElementById('chart_div_2'));
-               var options = {width: 400, height: 120, redFrom: 75, redTo: 100,
-                   yellowFrom:60, yellowTo: 75, minorTicks: 5};
-               chart.draw(data2, options);
+               var chart2 = new google.visualization.Gauge(document.getElementById('chart_div_2'));
+               var options2 = {width: 150, height: 150, redFrom: 90, redTo: 100,
+                         yellowFrom:75, yellowTo: 90, minorTicks: 5};
+               chart2.draw(data2, options2);
+               
+               
+               
+               var data3 = new google.visualization.DataTable();
+               data3.addColumn('string', 'Label');
+               data3.addColumn('number', 'Score');
+               
+               data3.addRows(1);
+               data3.setValue(0, 0, 'Num');
+               data3.setValue(0, 1, siteReportCount);
+                             
+               var chart3 = new google.visualization.ColumnChart(document.getElementById('chart_div_3'));
+                       chart3.draw(data3, {width: 350, height: 240, title: 'Unreachability warnings',
+                                         hAxis: {title: 'Herdict report', titleTextStyle: {color: 'red'}}
+                                        });
+               
              }
          
     </script>
@@ -79,6 +96,10 @@
     	  }
     	  
     	  #canvas-container {
+	    	  display: none;
+    	  }
+    	  
+    	  #country-info-tab, #site-info-tab {
 	    	  display: none;
     	  }
     	  
@@ -138,9 +159,12 @@
 	            $("#country-tab").show();
             });
 			
-			$("#close-infotab").click(function(){
-				 $("#country-tab").hide();
-				 $("#waiting-view").removeClass("span12").addClass("span16");
+			$("#close-country-infotab").click(function(){
+				 $("#country-info-tab").fadeOut();
+			});
+			
+			$("#close-site-infotab").click(function(){
+				 $("#site-info-tab").fadeOut();
 			});
         });
         
@@ -152,10 +176,12 @@
 		        for (site in data.sites) {
 		        	topSiteArray.push(data.sites[site].domain);
 		        };
-		        $('#waiting-view').delay(1000).fadeOut('slow', function() {
-			        $('#waiting-view').remove();
-			        $('#canvas-container').fadeIn('slow');	        	
-		        });
+		      	       
+			   $('#spinner').fadeOut("slow", function() {
+				   $('#waiting-view-subheader').html('Type a Country');
+			   });	
+		       
+		    		       
 		        $("#siteField").autocomplete({
 		            source: topSiteArray,
 		            select: function(event, ui) {
@@ -163,6 +189,10 @@
 		            	eventMan.pub("site_selected", {siteNode : ui.item.label});
 		            	siteURL = ui.item.label;
 		            	getCountriesBySite(ui.item.label);
+		            	
+		            	$('#waiting-view').remove();
+		            	$('#canvas-container').fadeIn('slow');	        	
+		            	
 		            }
 		        });
 	          }
@@ -194,13 +224,26 @@
         	$.ajax({
         	  url: "/site/"+siteURL,
         	  success: function(data){
-        	    console.log(data);
-        	    siteKeywords = data.keywords;
-        	    siteReportCount = data.reports; 
+        	    console.log(data);        	    
+        	    generateSiteInfoTab(data);
         	    //$(this).addClass("done");
         	  }
         	});
         };        
+              
+        
+        function transparencyToValue(transpLevel) {
+        	switch (transpLevel) {
+				case "Low":
+					return 90;
+				case "Medium":
+					return 50;
+				case "High":
+					return 20;
+				default:
+					return 0;
+			}
+        }
                
         function getCountryDetails(countryName) {
         	$.ajax({
@@ -209,6 +252,7 @@
         	    console.log(data);
         	    countryReport = data;
         	     score = countryReport.scores;
+        	     transparencyScore = transparencyToValue(countryReport.transparency);
         	     generateCountryInfoTab();  
         	    //$(this).addClass("done");
         	  }
@@ -228,12 +272,35 @@
               
         
         function generateCountryInfoTab() {
-        
 	       	     drawChart();       
 	       	     $('#country-title').attr('style', "background-image: url('"+countryReport.flag+"')");
 	       	     $('#country-title').html(countryReport.name);
-	       	     $('#google-removal-request').html('Google Content Removal requests: ' + countryReport.google.contentRemoval.contentRemovalRequests);	  
+	
+	       	     if(countryReport.google)  
+		       	     $('#google-removal-request').html('Google Content Removal requests: ' + countryReport.google.contentRemoval.contentRemovalRequests);	  
+
+				$('#site-info-tab').fadeOut();
+				$('#country-info-tab').fadeIn();
         };
+        
+        function generateSiteInfoTab(site) {
+        
+        		siteKeywords = site.keywords;
+		        siteReportCount = site.reports; 
+		        drawChart();
+				$screenshoot = 'http://www.sharpnod.es/site/google.com/preview';
+				
+				//$('#site_screenshot').load('http://www.sharpnod.es/site/'+site.domain+'/preview');
+				
+				$('#site_screenshot').html('<img src="http://www.sharpnod.es/site/'+site.domain+'/preview" width="350"/>');
+				
+				console.log($('#site_screenshot'));
+				$('#site-info-tab h3').attr('style', "background-image: url('http://"+site.domain+"/favicon.ico')");
+				$('#site-info-tab h3').html(site.domain);
+				
+				$('#country-info-tab').fadeOut();
+				$('#site-info-tab').fadeIn();
+        }
               
         eventMan.sub("sitenode_clicked", function(a){getSiteData(a.message)});
         eventMan.sub("countrynode_clicked", function(a){getCountryDetails(a.message)});
@@ -295,12 +362,13 @@
       <div class="span16 myWell" id='waiting-view' style="text-align: center;"> 
       	<img src="img/logo.png" style="margin-top: 30px;"/>
       	<div id='spinner' style="margin-bottom: 30px;"></div>
-      	<p> Loading... </p>
+      	<p id="waiting-view-subheader"> Loading... </p>
       </div>  
       
       <div class="span16 myWell" id='canvas-container'>
 	      <canvas id="paperCanvas" width="940" height="450"></canvas>
       </div>
+
 
 	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 450px; z-index: 5000;">
 		  <div class="row">
@@ -310,13 +378,13 @@
 		  		</h3>
 		  	</div>
 		  	<div class="span1" style="text-align: right;">
-		  		<h4 id='close-infotab' style="margin-right: 5px; color: #FFF;">X</h4>
+		  		<h4 id='close-country-infotab' style="margin-right: 5px; color: #FFF;">X</h4>
 		  	</div>
 		  </div>
 
 		  <div class="row">
 	      	<div class="span6">
-	      		<p id='google-removal-request' style="color: #FFF; margin-left: 5px;">Google Content Removal requests: 5</p>
+	      		<p id='google-removal-request' style="color: #FFF; margin-left: 5px;">Google Content Removal requests: N/A</p>
 			</div>  	
 		  </div>  
 		  
@@ -326,6 +394,27 @@
 		    	<div id="chart_div_2"></div>
 		  </div>
 		  </div>
+	 </div>
+	
+	
+	 <div class="span6 offset10" id='site-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 450px; z-index: 5000;">
+			  <div class="row">
+			  	<div class="span5">
+			  		<h3 id='site-title' class="flag" style="background-image: url('http://facebook.com/favicon.ico');">
+			  			SiteName		  		
+			  		</h3>
+			  	</div>
+			  	<div class="span1" style="text-align: right;">
+			  		<h4 id='close-site-infotab' style="margin-right: 5px; color: #FFF;">X</h4>
+			  	</div>
+			  </div>
+	
+			  <div id='country-chart-row' class="row">
+			  	<div class="span6">
+			  		<div id="site_screenshot"></div>
+			    	<div id="chart_div_3"></div>
+			  </div>
+			  </div>
 	 </div>
 	
 		
