@@ -15,8 +15,8 @@ var edgeType = "edge";
 var sep = "/";
 
 eventMan.sub("site_selected", function(a){addSiteNode(a)});
-eventMan.sub("country_added", function(a){addSiteNode(a)});
-eventMan.sub("country_removed", function(a){removeSiteNode(a)});
+eventMan.sub("country_added", function(a){addCountryForSite(a)});
+eventMan.sub("country_removed", function(a){removeCountryForSite(a)});
 
 
 // nodes - contains all nodes in the graph.
@@ -59,8 +59,8 @@ var mainNode = null;
 
 // CANVAS CONTROL FLAGS
 
-var noDataToVisualize = true;
-var noChangeInLayout = true;
+var noDataToVisualize = false;
+var noChangeInLayout = false;
 
 //--------------------
 
@@ -364,26 +364,44 @@ function addCountryForSite(countryData) {
 
 	var countryCenter = nodes[mainNode].node.position + [1,1];
 	var countryNode = createNode(
-		countryType,countryData.country,countryCenter,defaultRadius);
-	createEdge(mainNode,countryNode,defaultLength);
+		countryType,countryData.country,countryCenter,defaultRadius,'grey');
+		
+	console.log(countryNode);
+	
+	createEdge(mainNode,countryNode,defaultLength,'grey');
 	var isps = countryData.isps;
 	for(var i=0; i<isps.length; i++) {
 		var isp = isps[i];
 		var ispNode = createNode(ispType,isp,countryCenter + [i,i],defaultRadius);
-		createEdge(countryNode,ispNode,defaultLength);
+		createEdge(countryNode,ispNode,defaultLength,'grey');
 	}
 
 }
 
 function removeCountryForSite(country) {
 
-	var countryNode = countryType + sep + country;
-	for(var ispNode in edges[countryNode])
+	var countryNode = countryType + sep + country.countryName;
+	
+	console.log(countryNode);
+	
+	for(var ispNode in edges[countryNode]) {
+		console.log(ispNode);
+		nodes[ispNode].node.remove();
+		nodes[ispNode].text.remove();
+		delete nodes[ispNode];
 		edges[countryNode][ispNode].edge.remove();
+		delete edges[countryNode][ispNode];
+	}
+	
+	
 	delete edges[countryNode];
+	edges[mainNode][countryNode].edge.remove();
+	delete edges[mainNode][countryNode];
 	nodes[countryNode].node.remove();
 	nodes[countryNode].text.remove();
 	delete nodes[countryNode];
+	
+console.log(nodes, edges);
 
 }
 
