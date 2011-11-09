@@ -32,6 +32,14 @@ insertData = ->
       report = new Report
         domain: 'www.google.it'
         timestamp: new Date()
+        isp: 'h_telecom'
+        countryName: 'england'
+        countryCode: 'uk'
+      report.save -> next()
+    ,(next) ->
+      report = new Report
+        domain: 'www.google.it'
+        timestamp: new Date()
         isp: 'h_telecom_2'
         countryName: 'england'
         countryCode: 'en'
@@ -56,6 +64,15 @@ describe "report controller", ->
       expect(response.statusCode).toBe(200)
       expect(response.headers["content-type"]).toBe('application/json')
       expect(response.body).toBe('{"countries":["italy","france","england"]}')
+      done()
+
+  it "GET /SITE/domain/country/countryname", ->
+    insertData()
+    wait()
+    get '/site/www.google.it/country/england/isps', (error, response, body) ->
+      expect(response.statusCode).toBe(200)
+      expect(response.headers["content-type"]).toBe('application/json')
+      expect(response.body).toBe('{"isps":["h_telecom","h_telecom_2"]}')
       done()
       
   it "get GET SITE/WRONG/COUNTRIES", ->
