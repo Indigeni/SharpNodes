@@ -30,30 +30,42 @@
 	<!-- Load Google Bar Chart Core -->	
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script  type="text/javascript"> 
-	   google.load("visualization", "1", {packages:["corechart"]});
+	   google.load("visualization", "1", {packages:["corechart","gauge"]});
        google.setOnLoadCallback(drawChart);      
        
        var score = {political:0,social:0,security:0,tools:0};
               
        function drawChart() {
-                   var data = new google.visualization.DataTable();
-                   data.addColumn('string', 'Theme');
-                   data.addColumn('number', 'Score');
-                   data.addRows(4);
-                   data.setValue(0, 0, 'political');
-                   data.setValue(0, 1, score.political);
-                   data.setValue(1, 0, 'social');
-                   data.setValue(1, 1, score.social);
-                   data.setValue(2, 0, 'security');
-                   data.setValue(2, 1, score.security);
-                   data.setValue(3, 0, 'tools');
-                   data.setValue(3, 1, score.tools);
+               var data = new google.visualization.DataTable();
+               data.addColumn('string', 'Theme');
+               data.addColumn('number', 'Score');
+               data.addRows(4);
+               data.setValue(0, 0, 'political');
+               data.setValue(0, 1, score.political);
+               data.setValue(1, 0, 'social');
+               data.setValue(1, 1, score.social);
+               data.setValue(2, 0, 'security');
+               data.setValue(2, 1, score.security);
+               data.setValue(3, 0, 'tools');
+               data.setValue(3, 1, score.tools);
            
-                   var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-                   chart.draw(data, {width: 350, height: 240, title: 'Country OpenNet Scores',
-                                     vAxis: {title: 'Theme', titleTextStyle: {color: 'red'}}
-                                    });
-       }
+               var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+               chart.draw(data, {width: 350, height: 240, title: 'Country OpenNet Scores',
+                                 vAxis: {title: 'Theme', titleTextStyle: {color: 'red'}}
+                                });
+       
+               var data2 = new google.visualization.DataTable();
+               data2.addColumn('string', 'Label');
+               data2.addColumn('string', 'Value');
+               data2.addRows(1);
+               data2.setValue(0, 0, 'Transparency');
+               data2.setValue(0, 1, 'Low');
+       
+               var chart = new google.visualization.Gauge(document.getElementById('chart_div_2'));
+               var options = {width: 400, height: 120, redFrom: 75, redTo: 100,
+                   yellowFrom:60, yellowTo: 75, minorTicks: 5};
+               chart.draw(data2, options);
+             }
          
     </script>
 		
@@ -223,7 +235,7 @@
 	       	     $('#google-removal-request').html('Google Content Removal requests: ' + countryReport.google.contentRemoval.contentRemovalRequests);	  
         };
               
-        eventMan.sub("sitenode_clicked", function(a){getSiteData(a)});
+        eventMan.sub("sitenode_clicked", function(a){getSiteData(a.message)});
         eventMan.sub("countrynode_clicked", function(a){getCountryDetails(a.message)});
     
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
@@ -311,6 +323,7 @@
 		  <div id='country-chart-row' class="row">
 		  	<div class="span6">
 		    	<div id="chart_div"></div>
+		    	<div id="chart_div_2"></div>
 		  </div>
 		  </div>
 	 </div>
