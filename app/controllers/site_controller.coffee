@@ -29,8 +29,24 @@ module.exports = (app) ->
 
   app.get '/site/:domain/preview', (req, res) ->
     res.contentType('image/png')
-    domain = req.params.domain
-    file = "/tmp/#{domain}.png"
-    runExternal "phantomjs", [__dirname + "/../../rasterize.js", "http://www.#{domain}", file], ->
-      res.sendfile(file)
 
+    Site.find domain: req.params.domain, (err, docs) ->
+      if docs[0]?
+        domain = req.params.domain
+        file = "/tmp/#{domain}.png"
+        runExternal "phantomjs", [__dirname + "/../../rasterize.js", "1024", "768", "http://www.#{domain}", file], ->
+          res.sendfile(file)
+      else
+        res.send JSON.stringify(error: "not found"), 404
+
+  app.get '/site/:domain/icon', (req, res) ->
+    res.contentType('image/png')
+
+    Site.find domain: req.params.domain, (err, docs) ->
+      if docs[0]?
+        domain = req.params.domain
+        file = "/tmp/#{domain}-icon.png"
+        runExternal "phantomjs", [__dirname + "/../../rasterize.js", "16", "16", "http://www.#{domain}/favicon.ico", file], ->
+          res.sendfile(file)
+      else
+        res.send JSON.stringify(error: "not found"), 404
