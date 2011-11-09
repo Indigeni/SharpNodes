@@ -1,6 +1,17 @@
 
 Site = require("site").Site
 
+sys = require('sys')
+child_process = require('child_process')
+process = global.process
+path = require('path')
+
+runExternal = (command, args=[], callback) ->
+  console.log("Running #{command} #{args.join(" ")}")
+  child = child_process.spawn(command, args,
+    customFds: [process.stdin, process.stdout, process.stderr])
+  child.on('exit', callback) if callback?
+
 module.exports = (app) ->
   app.get '/site/:domain', (req, res) ->
     res.contentType('application/json')
@@ -10,8 +21,16 @@ module.exports = (app) ->
         res.send JSON.stringify docs[0]
       else
         res.send JSON.stringify(error: "not found"), 404
-        
+
   app.get '/top_sites', (req, res) ->
     res.contentType('application/json')
     Site.findTopSites (err,docs) ->
         res.send JSON.stringify {sites: docs}
+
+  app.get '/site/:domain/preview', (req, res) ->
+    res.contentType('image/png')
+    domain = req.params.domain
+    file = "/tmp/#{domain}.png"
+    runExternal "phantomjs", [__dirname + "/../../rasterize.js", "http://www.#{domain}", file], ->
+      res.sendfile(file)
+
