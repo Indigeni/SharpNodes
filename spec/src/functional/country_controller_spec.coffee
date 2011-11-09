@@ -25,7 +25,7 @@ insertData = ->
       complete()
 
 
-describe "report controller", ->
+describe "country controller", ->
 
   beforeEach ->
     wait()
