@@ -258,7 +258,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
   		
   		nodes[pathName] = {
 			node: path,
-			//name: nodeData.name,
+			name: nodeData.name,
 			circle: circle,
 			type: type,
 			charge: radius,
@@ -304,7 +304,7 @@ function createNode(type, id, center, radius, color) {
 	
 	nodes[pathName] = {
 			node: path,
-			//name: id,
+			name: id,
 			type: type,
 			charge: radius,
 			r: radius,
@@ -486,10 +486,13 @@ function handleClick(where) {
 
 function handleNodeClick(nodeID) {
 
+	console.log("handling click for " + nodeID);
+	console.log("will send node name: " + nodes[nodeID].name);
+
 	if(nodes[nodeID].type == siteType)
-		eventMan.pub("sitenode_clicked",{message: nodes[nodeID].name});
+		eventMan.pub("sitenode_clicked", {message: nodes[nodeID].name});
 	if(nodes[nodeID].type == countryType)
-		eventMan.pub("countrynode_clicked",{message:nodes[nodeID].name});
+		eventMan.pub("countrynode_clicked", {message: nodes[nodeID].name});
 
 }
 
