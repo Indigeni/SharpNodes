@@ -214,7 +214,7 @@ function updateNode(nodeID, delta) {
 
 }
 
-function createNodeAsync(type, id, center, radius, callback, color) {
+function createNodeAsync(type, nodeData, center, radius, callback, color) {
 
 	console.log("creating node from image: " + type + "," + id);
 
@@ -224,14 +224,14 @@ function createNodeAsync(type, id, center, radius, callback, color) {
     	fontSize: 20,
     	fillColor: "red",
 	};
-	text.content = id;
+	text.content = nodeData.name;
 	
 	var path = null;
-	var pathName = type + sep + id;
+	var pathName = type + sep + nodeData.name;
 	text.name = pathName;
 	var imgPath = null;
 	if(type == countryType)
-		imgPath = "<img src='flags/ad.png' id='img-for-node' style='display: none' />";
+		imgPath = "<img src='" + nodeData.flag + "' id='img-for-node' style='display: none' />";
 	else if (type == siteType)
 		imgPath = "<img src='http://sharpnod.es/site/" + id + "/icon' id='img-for-node' style='display: none' />";
 	var img = $(imgPath);
@@ -258,7 +258,7 @@ function createNodeAsync(type, id, center, radius, callback, color) {
   		
   		nodes[pathName] = {
 			node: path,
-			//name: id,
+			//name: nodeData.name,
 			circle: circle,
 			type: type,
 			charge: radius,
@@ -518,7 +518,7 @@ function addSiteNode(site) {
 
 	cleanUp();
 	
-	createNodeAsync(siteType,site.siteNode,view.center,defaultRadius,function(siteNode){
+	createNodeAsync(siteType,{name: site.siteNode},view.center,defaultRadius,function(siteNode){
 		mainNode = siteNode;
 	},"grey");
 	
@@ -535,7 +535,7 @@ function addCountryForSite(countryData) {
 	//	countryType,countryData.country,countryCenter,defaultRadius,'grey');
 		
 		
-	createNodeAsync(countryType,countryData.country,countryCenter,defaultRadius,function(countryNode) {
+	createNodeAsync(countryType,{name: countryData.country, flag: countryData.countryFlag},countryCenter,defaultRadius,function(countryNode) {
 	
 		console.log(countryNode);
 	
