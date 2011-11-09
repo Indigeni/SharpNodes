@@ -5,6 +5,7 @@ sys = require('sys')
 child_process = require('child_process')
 process = global.process
 path = require('path')
+fs = require('fs')
 
 runExternal = (command, args=[], callback) ->
   console.log("Running #{command} #{args.join(" ")}")
@@ -17,8 +18,12 @@ fetchImage = (width, length, req, res, buildParams) ->
   Site.find domain: req.params.domain, (err, docs) ->
     if docs[0]?
       [url, file] = buildParams(req.params.domain)
-      runExternal "phantomjs", [__dirname + "/../../rasterize.js", width, length, url, file], ->
-        res.sendfile(file)
+      fs.lstat file, (err, stat) ->
+        if stat.isFile()
+          res.sendfile(file)
+        else
+          runExternal "phantomjs", [__dirname + "/../../rasterize.js", width, length, url, file], ->
+            res.sendfile(file)
     else
       res.send JSON.stringify(error: "not found"), 404
 
