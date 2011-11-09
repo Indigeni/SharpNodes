@@ -15,7 +15,6 @@
     , "dependencies": {
         "coffee-script": "= 1.1.2"
       , "express": "= 2.5.0"
-      , "express-resource": "= 0.2.3"
       , "mongoose": "= 2.3.9"
       , "optimist": "= 0.2.8"
       , "eco": "= 1.1.0-rc-1"
