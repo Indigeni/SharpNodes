@@ -25,10 +25,10 @@
 	<script src="http://code.jquery.com/jquery-latest.js"></script>     
 	<script src="http://fgnass.github.com/spin.js/spin.min.js"></script>     
 	<script type="text/paperscript" src="js/graphdrawer.js "canvas="paperCanvas"></script>    
-    <script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/superbly-tagfield.min.js"></script>
     <script type="text/javascript" src="js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
     <script type="text/javascript" src="js/bootstrap-popover.js"></script>
 	
 	<!-- Load Google Bar Chart Core -->	
@@ -131,6 +131,15 @@
 		
         $(document).ready(function() {
             
+            $(function () { 
+                $('#siteField')
+                .popover({
+                  offset: 5,
+                  placement: 'right'
+                });
+                $('#siteField').popover('show');
+            });
+            
             //disable the country textbox
             $('#contryTagfield').attr('disabled', true);
         
@@ -195,6 +204,7 @@
 		                
 		                //enable text
         	            $('#contryTagfield').removeAttr('disabled');
+        	            $('#siteField').popover('hide');
 		                
 		            	//Emetto segnale sito selezionato
 		            	eventMan.pub("site_selected", {siteNode : ui.item.label});
@@ -228,6 +238,19 @@
         	        tags: countryTags
         	    });
         	    
+        	    $input = $("li input.superblyTagInput")
+        	    
+        	    $input.attr('data-content', "... then the country to explore the relationship with the chosen web site");
+        	    $input.attr('rel','popover');
+                $input.attr('data-original-title',"Choose a Country");
+                $input.attr('title','Choose a Country');
+        	    
+        	    $input
+                .popover({
+                  offset: 5,
+                  placement: 'left',
+                });
+	            $input.popover('show');
         	    //$(this).addClass("done");
         	  }
         	});
@@ -357,8 +380,10 @@
     	<div class="row">
     		<div class="span-one-third">
     			<div class="input">
-    				<input class="xlarge" id="siteField" name="siteField" size="30" type="text" placeholder="Type a URL" />
-    			</div>	
+    				<input data-content="First step start typing a domain (eg: facebook.com)" rel="popover" data-original-title="Choose a Web Site"  class="xlarge" id="siteField" name="siteField" size="30" type="text" placeholder="Type a URL" />
+    			</div>
+    				
+    				
 	    	</div>
             <div class="span-one-third"><br></div>
 	    	<div class="span-one-third">
