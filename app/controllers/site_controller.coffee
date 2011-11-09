@@ -12,6 +12,16 @@ runExternal = (command, args=[], callback) ->
     customFds: [process.stdin, process.stdout, process.stderr])
   child.on('exit', callback) if callback?
 
+fetchImage = (width, length, req, res, buildParams) ->
+  res.contentType('image/png')
+  Site.find domain: req.params.domain, (err, docs) ->
+    if docs[0]?
+      [url, file] = buildParams(req.params.domain)
+      runExternal "phantomjs", [__dirname + "/../../rasterize.js", width, length, url, file], ->
+        res.sendfile(file)
+    else
+      res.send JSON.stringify(error: "not found"), 404
+
 module.exports = (app) ->
   app.get '/site/:domain', (req, res) ->
     res.contentType('application/json')
@@ -28,25 +38,7 @@ module.exports = (app) ->
         res.send JSON.stringify {sites: docs}
 
   app.get '/site/:domain/preview', (req, res) ->
-    res.contentType('image/png')
-
-    Site.find domain: req.params.domain, (err, docs) ->
-      if docs[0]?
-        domain = req.params.domain
-        file = "/tmp/#{domain}.png"
-        runExternal "phantomjs", [__dirname + "/../../rasterize.js", "1024", "768", "http://www.#{domain}", file], ->
-          res.sendfile(file)
-      else
-        res.send JSON.stringify(error: "not found"), 404
+    fetchImage(1024, 768, req, res, ( (domain) -> ["http://www.#{domain}", "/tmp/#{domain}.png"]))
 
   app.get '/site/:domain/icon', (req, res) ->
-    res.contentType('image/png')
-
-    Site.find domain: req.params.domain, (err, docs) ->
-      if docs[0]?
-        domain = req.params.domain
-        file = "/tmp/#{domain}-icon.png"
-        runExternal "phantomjs", [__dirname + "/../../rasterize.js", "16", "16", "http://www.#{domain}/favicon.ico", file], ->
-          res.sendfile(file)
-      else
-        res.send JSON.stringify(error: "not found"), 404
+    fetchImage(1024, 768, req, res, ( (domain) -> ["http://www.#{domain}/favicon.ico", "/tmp/#{domain}-ico.png"]))
