@@ -11,14 +11,11 @@ ReportSchema = new Schema
   countryCode: String
 
 ReportSchema.pre 'save', (next) ->
+  next()
   Site.findOne domain: @.domain, (err, site) =>
-    if not site?
-      next()
-      return
-
-    site.reports ||= 0
-    site.reports += 1
-    site.save ->
-      next()
+    if site?
+      site.reports ||= 0
+      site.reports += 1
+      site.save()
 
 exports.Report = mongoose.model 'Reports', ReportSchema
