@@ -25,6 +25,7 @@
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/superbly-tagfield.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-modal.js"></script>
 	
 	<!-- Less styles -->
     <link rel="stylesheet/less" href="lib/bootstrap.less">
@@ -170,7 +171,11 @@
         eventMan.sub("countrynode_clicked", function(a){getCountryDetails(countryName)});
         
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
-        
+
+
+        $.ready(function() {
+            $("#team").modal();
+        });
     </script>
   
     <!-- Le fav and touch icons -->
@@ -189,7 +194,8 @@
           <ul class="nav">
           </ul>
           <ul class="nav secondary-nav">
-          	<li><a href="#about">Team</a></li> 
+          	<li><a href="#" data-controls-modal="team" data-backdrop="static"
+                data-show="true">Team</a></li> 
           </ul>
         </div>
       </div>
@@ -280,9 +286,40 @@
       </div>
 
       <footer>
-        <p>&copy; Company 2011</p>
+      <p>&copy; <a href="#" data-controls-modal="team" data-backdrop="static"
+                data-show="true" id="copyright">Indigeni Digitali Team @ EUHackathon #h4t 2011</a></p>
       </footer>
 
+      <div id="team" class="modal hide fade in">
+          <div class="modal-header">
+              <a href="#" class="close">x</a>
+              <h3>Indigeni Digitali Team</h3>
+          </div>
+          <div class="model-body center" style="padding: 12px">
+              <table border="0" class="zebra-striped">
+                  <tr>
+                      <td><img src="team/giuliano.png" alt="Giuliano Iacobelli" width="80px" /></td>
+                      <td><a href="http://www.giulianoiavobelli.com">Giuliano Iacobelli</a> <br/> <a href="">@Giuliano84</a></td>
+                  </tr>
+                  <tr>
+                      <td><img src="team/matteo.png" alt="Matteo Collina" width="80px" /></td>
+                      <td><a href="http://www.matteocollina.com">Matteo Collina</a> <br/> <a href="">@matteocollina</a></td>
+                  </tr>
+                  <tr>
+                      <td><img src="team/alessandro.png" alt="Alessandro Manfredi" width="80px" /></td>
+                      <td><a href="http://www.n0on3.net">Alessandro Manfredi</a> <br/> <a href="">@n0on3</a></td>
+                  </tr>
+                  <tr>
+                      <td><img src="team/claudio.png" alt="Claudio Squarcella" width="80px" /></td>
+                      <td><a href="http://www.euhackathon.eu/speakers/?wppa<br/>album=5&wppa<br/>photo=55&wppa<br/>occur=1">Claudio Squarcella</a> <br/> <a href="">@hyperboreans</a></td> 
+                  </tr>
+                  <tr>
+                      <td><img src="team/david.png" alt="David Funaro" width="80px" /></td>
+                      <td><a href="http://www.davidfunaro.com">David Funaro</a> <br/> <a href="">@ingdavidino</a></td>
+                  </tr>
+              </table>
+          </div>
+      </div>
     </div> <!-- /container -->
 
   </body>
