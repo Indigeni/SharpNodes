@@ -87,7 +87,7 @@
                data3.setValue(0, 1, siteReportCount);
                              
                var chart3 = new google.visualization.ColumnChart(document.getElementById('chart_div_3'));
-                       chart3.draw(data3, {width: 340, height: 210, title: 'Unreachability warnings',
+                       chart3.draw(data3, {width: 340, height: 250, title: 'Unreachability warnings',
                                          hAxis: {title: 'Herdict report', titleTextStyle: {color: 'red'}}
                                         });
                
@@ -110,9 +110,17 @@
     	  
     	  #country-info-tab, #site-info-tab {
 	    	  display: none;
-	    	  -moz-box-shadow: 3px 3px 4px #333;
-	    	  -webkit-box-shadow: 3px 3px 4px #333;
-	    	  box-shadow: 3px 3px 4px #333;
+	    	  .border-radius(4px);
+	    	  .box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
+	    	  -moz-box-shadow: 0 0 3px 3px #333;
+	    	  -webkit-box-shadow: 0 0 3px 3px #333;
+	    	  box-shadow: 0 0 3px 3px #333;
+	    	  position: absolute; 
+	    	  opacity:0.8; 
+	    	  background-color: #555; 
+	    	  top: 122px; 
+	    	  height: 505px; 
+	    	  z-index: 5000;
     	  }
     	  
     	  .flag {
@@ -345,7 +353,7 @@
 				
 				$('#site_screenshot').html('<img src="http://www.sharpnod.es/site/'+site.domain+'/preview" width="150"/>');
 
-				$('#site_keywords').html('pippo');
+				$('#site_keywords').html(siteKeywords.join(', '));
 				
 				$('#site-info-tab h3').attr('style', "background-image: url('http://"+site.domain+"/favicon.ico')");
 				$('#site-info-tab h3').html(site.domain);
@@ -423,7 +431,7 @@
       </div>
 
 
-	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 122px; height: 503px; z-index: 5000;">
+	 <div class="span6 offset10" id='country-info-tab'>
 		  <div class="row">
 		  	<div class="span5">
 		  		<h3 id='country-title' class="flag" style="background-image: url('/flags/us.png');">
@@ -450,7 +458,7 @@
 	 </div>
 	
 	
-	 <div class="span6 offset10" id='site-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 122px; height: 503px; z-index: 5000;">
+	 <div class="span6 offset10" id='site-info-tab'>
 			  <div class="row">
 			  	<div class="span5">
 			  		<h3 id='site-title' class="flag" style="background-image: url('http://facebook.com/favicon.ico');">
@@ -464,7 +472,7 @@
 	
 			  <div class="row">
 			    <div class="span3">
-			    	<div id="site_keywords"></div>
+			    	<div id="site_keywords" style="margin-left: 6px; color: #fff;"></div>
 			    </div>
 				<div class="span3">
 					<div id="site_screenshot"></div>
