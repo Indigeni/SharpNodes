@@ -326,7 +326,7 @@ function handleClick(where) {
 function handleNodeClick(nodeID) {
 
 	if(nodes[nodeID].type == siteType)
-		eventMan.pub("sitenode_clicked",{message:nodes[nodeID].name});
+		eventMan.pub("sitenode_clicked",{message: nodes[nodeID].name});
 	if(nodes[nodeID].type == countryType)
 		eventMan.pub("countrynode_clicked",{message:nodes[nodeID].name});
 
@@ -336,6 +336,7 @@ function cleanUp() {
 
 	for(var node in nodes) {
 		nodes[node].node.remove();
+		nodes[node].text.remove();
 		delete nodes[node];
 	}
 	for(var node in edges) {
@@ -354,9 +355,11 @@ function cleanUp() {
 
 function addSiteNode(site) {
 
+	//console.log("add site node: " + site);
+
 	cleanUp();
 
-	mainNode = createNode(siteType,site,new Point(0,0),defaultRadius);
+	mainNode = createNode(siteType,site.siteNode,new Point(0,0),defaultRadius,"grey");
 
 }
 
