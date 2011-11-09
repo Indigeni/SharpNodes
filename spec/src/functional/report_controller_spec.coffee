@@ -72,7 +72,7 @@ describe "report controller", ->
     get '/site/www.google.it/country/england/isps', (error, response, body) ->
       expect(response.statusCode).toBe(200)
       expect(response.headers["content-type"]).toBe('application/json')
-      expect(response.body).toBe('{"isps":["h_telecom","h_telecom_2"]}')
+      expect(response.body).toBe('{"isps":["h_telecom","h_telecom_2"],"herdict_report_count":3}')
       done()
       
   it "get GET SITE/WRONG/COUNTRIES", ->

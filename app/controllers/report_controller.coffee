@@ -17,6 +17,7 @@ module.exports = (app) ->
     
     Report.distinct "isp", { countryName: req.params.country, domain: req.params.domain}, (err, docs) ->
       if docs.length != 0
-        res.send JSON.stringify('isps': docs)
+        Report.count { countryName: req.params.country, domain: req.params.domain}, (err,count) ->
+          res.send JSON.stringify('isps': docs, 'herdict_report_count':count)
       else
         res.send JSON.stringify(error: "not found"), 404
