@@ -47,6 +47,8 @@
 		var countryTags = [];
 		var siteKeywords = [];
 		var siteReportCount = 0;
+		var siteURL = "";
+		var herdictSiteReport = [];
 		
         $(document).ready(function() {
         
@@ -105,24 +107,13 @@
 		            select: function(event, ui) {
 		            	//Emetto segnale sito selezionato
 		            	eventMan.pub("site_selected", {siteNode : ui.item.label});
+		            	siteURL = ui.item.label;
 		            	getCountriesBySite(ui.item.label);
 		            }
 		        });
 	          }
 	        });
         }
-        
-        function getSiteData(siteURL) {
-        	$.ajax({
-        	  url: "/site/"+siteURL,
-        	  success: function(data){
-        	    console.log(data);
-        	    siteKeywords = data.keywords;
-        	    siteReportCount = data.reports; 
-        	    //$(this).addClass("done");
-        	  }
-        	});
-        };
         
         function getCountriesBySite(siteURL) {
         	$.ajax({
@@ -141,8 +132,42 @@
         	});
         };
         
-        eventMan.sub("sitenode_clicked", function(a){});
-        eventMan.sub("countrynode_clicked", function(a){});
+        function getSiteData(siteURL) {
+        	$.ajax({
+        	  url: "/site/"+siteURL,
+        	  success: function(data){
+        	    console.log(data);
+        	    siteKeywords = data.keywords;
+        	    siteReportCount = data.reports; 
+        	    //$(this).addClass("done");
+        	  }
+        	});
+        };        
+               
+        function getCountryDetails(countryName) {
+        	$.ajax({
+        	  url: "/country/"+countryName,
+        	  success: function(data){
+        	    console.log(data);        	    
+        	    //$(this).addClass("done");
+        	  }
+        	});        
+        };
+        
+        function getCountryDetailsBySite(countryName) {
+        	$.ajax({
+        	  url: "/site/"+siteURL+"/country/"+countryName+"/isps",
+        	  success: function(data){
+        	    console.log(data);    
+        	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY 
+        	    herdictSiteReport[countryName] = data.herdict_report_count;   	    
+        	    //$(this).addClass("done");
+        	  }
+        	});        
+        };
+              
+        eventMan.sub("sitenode_clicked", function(a){getSiteData(a)});
+        eventMan.sub("countrynode_clicked", function(a){getCountryDetails(countryName)});
         
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
         

@@ -540,8 +540,6 @@ function onMouseUp(event) {
 
 
 
-var image = new Raster("<img src='flags/ad.png'/>");
-
 
 //populateGraph();
 
