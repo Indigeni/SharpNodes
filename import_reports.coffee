@@ -6,13 +6,12 @@ mongoose.connect db
 
 require.paths.unshift("app/models")
 require.paths.unshift("lib")
-
-Site = require('site').Site
+Report = require('report').Report
 
 jsonImport = require("json_line_importer")
 
-Site.remove ->
+Report.remove ->
   doFunc = (obj, cb) -> 
-    (new Site(obj)).save(cb)
+    obj.timestamp = new Date(obj.timestamp)
+    (new Report(obj)).save(cb)
   jsonImport(doFunc, process.stdin, process.exit)
-
