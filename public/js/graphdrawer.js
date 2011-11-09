@@ -61,6 +61,7 @@ var mainNode = null;
 
 var noDataToVisualize = false;
 var noChangeInLayout = false;
+var freezeLayoutEngine = false;
 
 //--------------------
 
@@ -193,17 +194,65 @@ function calculateDeltas() {
 	return deltas;
 }
 
-function updateNode(nodeID, deltas) {
+function updateNode(nodeID, delta) {
 
 	if(selectedNode!=null)
 		if(selectedNode.name == nodeID)
 			return;
 
-	var delta = deltas[nodeID];
 	var node = nodes[nodeID].node;
 	var text = nodes[nodeID].text;
+	var circle = nodes[nodeID].circle;
 	node.position += delta;
 	text.position += delta;
+	if(circle)
+		circle.position += delta;
+
+}
+
+function createNodeAsync(type, id, center, radius, callback, color) {
+
+	var text = new PointText(center);
+	text.justification = "center";
+	text.characterStyle = {
+    	fontSize: 20,
+    	fillColor: "red",
+	};
+	text.content = id;
+	
+	var path = null;
+	var pathName = type + sep + id;
+	var img = $("<img src='flags/ad.png' id='flag-ad' style='display: none' />");
+	$("body").append(img);
+	img.load(function() {
+  		path = new Raster('flag-ad');
+  		path.position = center;
+  		path.scale(radius*2.2/path.bounds.width);
+  		path.opacity = 0.9;
+  		console.log("inserting text above path? " + path.insertBelow(text));
+  		path.name = pathName;
+  		
+  		var circle = new Path.Circle(center,radius);
+  		circle.opacity = 0.1;
+  		circle.fillColor = "white";
+  		circle.insertBelow(text);
+  		circle.name = pathName;
+  		
+  		nodes[pathName] = {
+			node: path,
+			//name: id,
+			circle: circle,
+			type: type,
+			charge: radius,
+			r: radius,
+			text: text
+		};
+  		img.remove();
+  		callback(pathName);
+  		
+	});
+	
+	//return pathName;
 
 }
 
@@ -224,14 +273,18 @@ function createNode(type, id, center, radius, color) {
     	fillColor: "red",
 	};
 	text.content = id;
+	
 	console.log("inserting text above path? " + path.insertBelow(text));
+	
+	//var path = null;
+	
 	nodes[pathName] = {
-		node: path,
-		//name: id,
-		type: type,
-		charge: radius,
-		r: radius,
-		text: text
+			node: path,
+			//name: id,
+			type: type,
+			charge: radius,
+			r: radius,
+			text: text
 	};
 	
 	return pathName;
@@ -370,8 +423,17 @@ function handleNodeDrag(node,delta) {
 
 	var name = node.name;
 
-	node.position += delta;
+
+	// TODO
+	nodes[name].node.position += delta;
 	nodes[name].text.position += delta;
+	if(nodes[name].circle)
+		nodes[name].circle.position += delta;
+
+	//updateNode(node.name,delta);
+
+	//node.position += delta;
+	//nodes[name].text.position += delta;
 	
 	// change spring length
 	if(nodes[name].parent!=null) {
@@ -383,6 +445,8 @@ function handleNodeDrag(node,delta) {
 function handleClick(where) {
 
 	var hitResult = project.hitTest(where, hitOptions);
+	
+	console.log("hit result: " + hitResult);
 	
 	if(hitResult==null)
 		return null;
@@ -436,19 +500,28 @@ function addSiteNode(site) {
 function addCountryForSite(countryData) {
 
 	var countryCenter = nodes[mainNode].node.position + [Math.random()*10-5,Math.random()*10-5];
-	var countryNode = createNode(
-		countryType,countryData.country,countryCenter,defaultRadius,'grey');
+	//var countryNode = createNode(
+	//	countryType,countryData.country,countryCenter,defaultRadius,'grey');
 		
-	console.log(countryNode);
+		
+	createNodeAsync(countryType,countryData.country,countryCenter,defaultRadius,function(countryNode) {
 	
-	createEdge(mainNode,countryNode,defaultLength,'LightGrey');
-	var isps = countryData.isps;
-	for(var i=0; i<isps.length; i++) {
-		var isp = isps[i];
-		var ispNode = createNode(ispType,isp,
-			countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius);
-		createEdge(countryNode,ispNode,defaultLength,'LightGrey');
-	}
+		console.log(countryNode);
+	
+		createEdge(mainNode,countryNode,defaultLength,'LightGrey');
+		var isps = countryData.isps;
+		for(var i=0; i<isps.length; i++) {
+			var isp = isps[i];
+			var ispNode = createNode(ispType,isp,
+				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius);
+			createEdge(countryNode,ispNode,defaultLength,'LightGrey');
+		}
+	
+	},'grey');
+	
+	
+		
+
 
 }
 
@@ -485,13 +558,13 @@ console.log(nodes, edges);
 
 function onFrame(event) {
 
-	if(noDataToVisualize || noChangeInLayout)
+	if(noDataToVisualize || noChangeInLayout || freezeLayoutEngine)
 		return;
 		
 	var deltas = calculateDeltas();
 	
 	for(var node in nodes)
-		updateNode(node, deltas);
+		updateNode(node, deltas[node]);
 		
 	for(var node1 in edges)
 		for(var node2 in edges[node1])
@@ -508,14 +581,15 @@ function onMouseDown(event) {
 function onMouseDrag(event) {
     
     if(selectedNode!=null) {
-    	console.log("dragging " + selectedNode);
+    	//console.log("dragging " + selectedNode);
     	nodeWasDragged = true;
     	handleNodeDrag(selectedNode,event.delta);
     }
     else {
     	for(nodeID in nodes) {
-    		nodes[nodeID].node.position += event.delta;
-    		nodes[nodeID].text.position += event.delta;
+    		updateNode(event.delta);
+    		//nodes[nodeID].node.position += event.delta;
+    		//nodes[nodeID].text.position += event.delta;
     	}
     	for(nodeID1 in edges)
     		for(nodeID2 in edges[nodeID1])
