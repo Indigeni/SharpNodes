@@ -83,12 +83,12 @@ var hitOptions = {
 
 var centerOfScreen = view.center; // once for all! for scrolling and stuff.
 var maxDistanceForRepulsiveCharges = 800;
-var repulsionConstant = 6.0;
-var attractionConstant = 0.002;
+var repulsionConstant = 9.8;
+var attractionConstant = 0.000;
 var springConstant = 0.05;
 var centerAttractionTolerance = 50;
-var defaultRadius = 30;
-var defaultLength = 200;
+var defaultRadius = 25;
+var defaultLength = 150;
 
 var maxNumberOfISPsPerCountry = 4;
 
@@ -142,7 +142,7 @@ function calculateDeltas() {
 				p2 += [1, 1];
 			
 			var vector = (p2 - p1).normalize();
-			var distance = p1.getDistance(p2);
+			var distance = Math.max(defaultRadius,p1.getDistance(p2));
 			var charge2 = nodes[node2].charge;
 			if(distance > maxDistanceForRepulsiveCharges)
 				continue;
@@ -227,11 +227,11 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 
 	console.log("creating node from image: " + type,nodeData);
 
-	var text = new PointText(center);
+	var text = new PointText(center+[0,radius]);
 	text.justification = "center";
 	text.characterStyle = {
 		font: "helvetica",
-    	fontSize: 20,
+    	fontSize: 10,
     	fillColor: "white"
 	};
 	text.content = nodeData.name;
@@ -241,16 +241,16 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 	
 	// very low level text container .......
 	var strlen = text.content.length;
-	var width = 20 * strlen * 0.8, height = 32;
-	var p1 = new Point(center.x-width/2,center.y-height*2/3),
-		p2 = new Point(center.x+width/2,center.y+height*1/3);
+	var width = 10 * strlen * 0.8, height = 25;
+	var p1 = new Point(center.x-width/2,center.y+radius-height*2/3),
+		p2 = new Point(center.x+width/2,center.y+radius+height*1/3);
 	
 	console.log("building text container with point, size:",text.bounds.point,text.bounds.size);
 	
 	//var textContainer = new Path.RoundRectangle(new Path.Rectangle(p1,p2),new Size(10,10));
 	var textContainer = new Path.Rectangle(p1,p2);
 	textContainer.fillColor = "black";
-	textContainer.opacity = 0.5;
+	textContainer.opacity = 0.6;
 	textContainer.name = pathName;
 
 
@@ -314,10 +314,12 @@ function createNode(type, id, center, radius, color) {
 
 	var pathName = type + sep + id;
 	
+	var path = new Path.Circle(center,radius);
+	
 	if(nodes[pathName]!=null)
 		return null;
 
-	var path = new Path.Circle(center, radius);
+	var text = new PointText(center+[0,radius]);
 	
 	if(color) {
 		path.fillColor = color;
@@ -331,11 +333,11 @@ function createNode(type, id, center, radius, color) {
 		content = content.substring(0,15) + "...";
 	}
 	
-	var text = new PointText(center);
+	var text = new PointText(center+[0,radius]);
 	text.justification = "center";
 	text.characterStyle = {
 		font: "helvetica",
-    	fontSize: type == ispType ? 10 : 20,
+    	fontSize: 10,//type == ispType ? 10 : 20,
     	fillColor: "white"
 	};
 	text.content = content;
@@ -344,14 +346,14 @@ function createNode(type, id, center, radius, color) {
 		
 	// very low level text container .......
 	var strlen = text.content.length;
-	var width = (ispType ? 10 : 20) * strlen * 0.8, height = 32;
-	var p1 = new Point(center.x-width/2,center.y-height*2/3),
-		p2 = new Point(center.x+width/2,center.y+height*1/3);
+	var width = 10 * strlen * 0.8, height = 25;
+	var p1 = new Point(center.x-width/2,center.y+radius-height*2/3),
+		p2 = new Point(center.x+width/2,center.y+radius+height*1/3);
 	
 	//var textContainer = new Path.RoundRectangle(new Path.Rectangle(p1,p2),new Size(10,10));
 	var textContainer = new Path.Rectangle(p1,p2);
 	textContainer.fillColor = "black";
-	textContainer.opacity = 0.5;
+	textContainer.opacity = 0.6;
 	textContainer.name = pathName;
 	
 	console.log("inserting text above path? " + path.insertBelow(text));
@@ -609,7 +611,7 @@ function addCountryForSite(countryData) {
 	createNodeAsync(countryType,{name: countryData.country, 
 		flag: countryData.countryFlag},countryCenter,defaultRadius,function(countryNode) {
 	
-		console.log(countryNode);
+		console.log("adding isps for " + countryNode);
 	
 		createEdge(mainNode,countryNode,defaultLength,'LightGrey');
 		var isps = countryData.isps;
@@ -620,7 +622,7 @@ function addCountryForSite(countryData) {
 			if(isp=="null")
 				continue;
 			var ispNode = createNode(ispType,isp,
-				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius*0.8,"grey");
+				countryCenter + (countryCenter-nodes[mainNode].node.position).normalize()*2*defaultRadius + [Math.random()*10-5,Math.random()*10-5],defaultRadius*0.8,"grey");
 			if(ispNode==null)
 				continue;
 			createEdge(countryNode,ispNode,defaultLength,'LightGrey');
@@ -672,7 +674,7 @@ function removeCountryForSite(country) {
 			nodes[countryNode].circle.remove();
 	delete nodes[countryNode];
 	
-console.log(nodes, edges);
+	console.log(nodes, edges);
 
 }
 
@@ -689,11 +691,8 @@ function onFrame(event) {
 	
 	//console.log(event.count);
 	
-	for(var node in nodes) {
+	for(var node in nodes) 
 		updateNode(node, deltas[node]);
-		if(event.count%100==0)
-			console.log(nodes[node].text.bounds);
-	}
 		
 	for(var node1 in edges)
 		for(var node2 in edges[node1])
