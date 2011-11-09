@@ -327,6 +327,20 @@ function handleNodeClick(nodeID) {
 
 }
 
+function cleanUp() {
+
+	for(var node in nodes) {
+		nodes[node].node.remove();
+		delete nodes[node];
+	}
+	for(var node in edges) {
+		for(var node2 in edges[node])
+			edges[node][node2].edge.remove();
+		delete edges[node];
+	}
+
+}
+
 
 
 //--------------------
@@ -334,6 +348,8 @@ function handleNodeClick(nodeID) {
 // CUSTOM FUNCTIONS CALLED FROM OUTSIDE
 
 function addSiteNode(site) {
+
+	cleanUp();
 
 	mainNode = createNode(siteType,site,new Point(0,0),defaultRadius);
 
