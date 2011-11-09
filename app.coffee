@@ -36,6 +36,7 @@ require.paths.unshift("app/models")
 
 require('home_controller')(app)
 require('site_controller')(app)
+require('report_controller')(app)
 
 require 'site'
 
