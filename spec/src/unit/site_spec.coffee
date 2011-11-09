@@ -1,4 +1,24 @@
 Site = require("site").Site
+async = require('async')
+
+insertData = ->
+  async.parallel [
+    (next) ->
+      site = new Site
+        domain: "google.it"
+        keywords: ["search", "tools"]
+        reports: 68
+      site.save -> next()
+    ,(next) ->
+      site = new Site
+        domain: "pippo.it"
+        keywords: ["search", "tools"]
+        reports: 68
+      site.save -> next()
+    ],
+    (error) ->
+      fail(error) if (error)
+      complete()
 
 describe 'Site', ->
 
@@ -11,9 +31,11 @@ describe 'Site', ->
     site = new Site
       domain: "google.it"
       keywords: ["search", "tools"]
+      reports: 68
     site.save (err) ->
       Site.find domain: "google.it", (err, docs) ->
         expect(docs[0].domain).toBe(site.domain)
+        expect(docs[0].reports).toEqual(68)
         for keyword in site.keywords
           expect(docs[0].keywords).toContain(keyword)
         done()
@@ -50,4 +72,10 @@ describe 'Site', ->
           expect(docs.length).toBe(1)
           done()
     wait()
-
+    
+  it 'should find the top sites', ->
+    insertData()
+    wait()
+    Site.findTopSites (err,docs)->
+      expect(docs.length).toBe(2)
+      done()

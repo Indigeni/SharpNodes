@@ -10,3 +10,8 @@ module.exports = (app) ->
         res.send JSON.stringify docs[0]
       else
         res.send JSON.stringify(error: "not found"), 404
+        
+  app.get '/top_sites', (req, res) ->
+    res.contentType('application/json')
+    Site.findTopSites (err,docs) ->
+        res.send JSON.stringify {sites: docs}
