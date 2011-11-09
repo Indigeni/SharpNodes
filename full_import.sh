@@ -1,5 +1,7 @@
 #! /bin/sh
 
-(cat $1; echo) | ./import_sites.coffee
+(cat ./sites ; echo) | ./import_sites.coffee
 
-(cat $2; echo) | ./import_reports.coffee
+(cat ./reports ; echo) | ./import_reports.coffee
+
+./import_countries.coffee ./countries

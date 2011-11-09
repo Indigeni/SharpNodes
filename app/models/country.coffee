@@ -16,7 +16,16 @@ CountrySchema = new Schema
     tools: Number
     security: Number
   url: String
-  consistency: Number
-  trasparency: Number
+  consistency: String
+  trasparency: String
+  google:
+    userData:
+      usersDataRequests: Number
+      usersAccountsSpecified: Number
+      usersDataRequestsPercFulfilled: Number
+    contentRemoval:
+      contentRemovalPercFulfilled: Number
+      contentRemovalPercFulfilled: Number
+      itemsRequestedForRemoval: Number
 
 exports.Country = mongoose.model 'Countries', CountrySchema
