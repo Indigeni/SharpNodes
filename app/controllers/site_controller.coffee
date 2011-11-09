@@ -19,7 +19,7 @@ fetchImage = (width, length, req, res, buildParams) ->
     if docs[0]?
       [url, file] = buildParams(req.params.domain)
       fs.lstat file, (err, stat) ->
-        if stat.isFile()
+        if stat? and stat.isFile()
           res.sendfile(file)
         else
           runExternal "phantomjs", [__dirname + "/../../rasterize.js", width, length, url, file], ->
