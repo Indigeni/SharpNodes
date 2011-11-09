@@ -25,10 +25,11 @@
 	<script src="http://code.jquery.com/jquery-latest.js"></script>     
 	<script src="http://fgnass.github.com/spin.js/spin.min.js"></script>     
 	<script type="text/paperscript" src="js/graphdrawer.js "canvas="paperCanvas"></script>    
-
+    <script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/superbly-tagfield.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="js/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="js/bootstrap-popover.js"></script>
 	
 	<!-- Load Google Bar Chart Core -->	
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -129,6 +130,9 @@
 		var herdictSiteReport = {};
 		
         $(document).ready(function() {
+            
+            //disable the country textbox
+            $('#contryTagfield').attr('disabled', true);
         
 			var opts = {
 			  lines: 12, // The number of lines to draw
@@ -188,13 +192,19 @@
 		        $("#siteField").autocomplete({
 		            source: topSiteArray,
 		            select: function(event, ui) {
+		                
+		                //enable text
+        	            $('#contryTagfield').removeAttr('disabled');
+		                
 		            	//Emetto segnale sito selezionato
 		            	eventMan.pub("site_selected", {siteNode : ui.item.label});
 		            	siteURL = ui.item.label;
 		            	getCountriesBySite(ui.item.label);
 		            	
 		            	$('#waiting-view').remove();
-		            	$('#canvas-container').fadeIn('slow');	        	
+		            	$('#canvas-container').fadeIn('slow');	 
+
+       	
 		            	
 		            }
 		        });
@@ -340,7 +350,6 @@
         </div>
       </div>
     </div>
-    
     
     <div class="container">
     
