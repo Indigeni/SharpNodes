@@ -31,7 +31,7 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start do
-    run "cd #{current_path} && forever start app.js -p #{app_port}"
+    run "cd #{current_path} && DISPLAY=:0 forever start app.js -p #{app_port}"
   end
 
   task :stop do 
