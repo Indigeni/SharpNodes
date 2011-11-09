@@ -48,6 +48,7 @@ var nodes = {};
 //		nodeidN: {...}
 //	}
 var edges = {};
+var mainNode = null;
 
 //--------------------
 
@@ -81,6 +82,7 @@ var attractionConstant = 0.005;
 var springConstant = 0.05;
 var centerAttractionTolerance = 50;
 var defaultRadius = 30;
+var defaultLength = 100;
 
 //--------------------
 
@@ -320,9 +322,12 @@ function handleNodeClick(nodeID) {
 
 	if(nodes[nodeID].type == siteType)
 		eventMan.pub("sitenode_clicked",{message:nodes[nodeID].name});
-		//console.log("fire site node clicked event! " + nodes[nodeID].name);
+	if(nodes[nodeID].type == countryType)
+		eventMan.pub("countrynode_clicked",{message:nodes[nodeID].name});
 
 }
+
+
 
 //--------------------
 
@@ -330,7 +335,26 @@ function handleNodeClick(nodeID) {
 
 function addSiteNode(site) {
 
-	createNode(siteType,site,new Point(0,0),defaultRadius);
+	mainNode = createNode(siteType,site,new Point(0,0),defaultRadius);
+
+}
+
+function addCountryForSite(countryData) {
+
+	var countryNode = createNode(countryType,countryData.country,new Point(0,0),defaultRadius);
+	createEdge(mainNode,countryNode,defaultLength);
+	var isps = countryData.isps;
+	for(var i=0; i<isps.length; i++) {
+		var isp = isps[i];
+		var ispNode = createNode(ispType,isp,new Point(i,i),defaultRadius);
+		createEdge(countryNode,ispNode,defaultLength);
+	}
+
+}
+
+function removeCountryForSite(country) {
+
+	// TODO
 
 }
 
