@@ -43,6 +43,11 @@ task({"tests-start": []}, function() {
   app.start({ "port": 3000, "db": 'mongodb://localhost/sharpnodes_test' });
 })
 
+desc("Open a console")
+task({"console": ["tests-start"]}, function() {
+  repl = require('./node_modules/coffee-script/lib/repl.js')
+})
+
 desc("Run all specs")
 task({"spec": ["tests-start"]}, function() {
   var path = require("path"),
