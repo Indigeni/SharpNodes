@@ -16,8 +16,8 @@ insertData = ->
           tools: 7
           security: 6
         url: 'www.italia.it'
-        consistency: 0.5
-        trasparency: 0.8
+        consistency: '0.5'
+        trasparency: '0.8'
       report.save -> next()
     ],
     (error) ->
@@ -40,7 +40,7 @@ describe "country controller", ->
       expect(response.headers["content-type"]).toBe('application/json')
       expect(JSON.parse(response.body).name).toBe('italy')
       expect(JSON.parse(response.body).scores.social).toBe(9)
-      expect(JSON.parse(response.body).trasparency).toBe(0.8)
+      expect(JSON.parse(response.body).trasparency).toBe('0.8')
       done()
   
   it "GET Country/name KO", ->
