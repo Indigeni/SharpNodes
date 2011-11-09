@@ -34,6 +34,10 @@
     	  body {
         	padding-top: 80px;
     	  }
+    	  
+    	  #canvas-container {
+	    	  display: none;
+    	  }
     </style>
        
 	<!-- JQuery Imports -->
@@ -41,17 +45,11 @@
 	
 		var topSiteArray = []; 
 		var countryTags = [];
+		var siteKeywords = [];
+		var siteReportCount = 0;
 		
         $(document).ready(function() {
-         //   var countryTags = ['Andorra','Belgio','Bebbete','Cayman','Danimarca','Francia','Italia'];
-
-            // Initialize Demo 1
-           getSitesList();
-            
-            $("#country-data-close").click(function () {
-                  $(this).hide("slide", { direction: "right" }, 500);
-            });
-            
+        
 			var opts = {
 			  lines: 12, // The number of lines to draw
 			  length: 7, // The length of each line
@@ -64,6 +62,14 @@
 			};
 			var target = document.getElementById('spinner');
 			var spinner = new Spinner(opts).spin(target);
+        
+            // Initialize Demo 1
+           getSitesList();
+            
+            $("#country-data-close").click(function () {
+                  $(this).hide("slide", { direction: "right" }, 500);
+            });
+            
     
             // Start Action
             $('#tagDemoButton1').click(function(e){
@@ -90,6 +96,10 @@
 		        for (site in data.sites) {
 		        	topSiteArray.push(data.sites[site].domain);
 		        };
+		        $('#waiting-view').delay(1000).fadeOut('slow', function() {
+			        $('#waiting-view').remove();
+			        $('#canvas-container').fadeIn('slow');	        	
+		        });
 		        $("#siteField").autocomplete({
 		            source: topSiteArray,
 		            select: function(event, ui) {
@@ -107,6 +117,8 @@
         	  url: "/site/"+siteURL,
         	  success: function(data){
         	    console.log(data);
+        	    siteKeywords = data.keywords;
+        	    siteReportCount = data.reports; 
         	    //$(this).addClass("done");
         	  }
         	});
@@ -180,7 +192,13 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row">
       
-      <div class="span16 myWell">
+      <div class="span16 myWell" id='waiting-view' style="text-align: center;"> 
+      	<img src="img/logo.png" style="margin-top: 30px;"/>
+      	<div id='spinner' style="margin-bottom: 30px;"></div>
+      	<p> Loading... </p>
+      </div>  
+      
+      <div class="span16 myWell" id='canvas-container'>
 	      <canvas id="paperCanvas" width="940" height="400"></canvas>
       </div>
 
@@ -202,21 +220,13 @@
 		</div>-->
 		
 		
-	      <!--
-	      
-	      <div class="span12 myWell" id='waiting-view' style="text-align: center;"> 
-	      	<img src="img/logo.png" style="margin-top: 30px;"/>
-	      	<div id='spinner' style="margin-bottom: 30px;"></div>
-	      	<p> Loading... </p>
-	      </div>  
-	      
-	      <div class="span4" id="country-tab" style="position: absolute; z-index: 5000;">
-    	  	<div class="well-no-padding">
-      			<h3>aaaaaaaa</h3>
-	      	</div>
-    	  </div>
+<!--	    <div class="span4" id="country-tab" style="position: absolute; z-index: 5000;">
+    	  <div class="well-no-padding">
+      		<h3>aaaaaaaa</h3>
+	      </div>
+    	</div>-->
     	  
-    	  -->
+    	  
       
       </div>
      
