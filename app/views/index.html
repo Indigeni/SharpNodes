@@ -224,7 +224,7 @@
         };
               
         eventMan.sub("sitenode_clicked", function(a){getSiteData(a)});
-        eventMan.sub("countrynode_clicked", function(a){getCountryDetails(countryName)});
+        eventMan.sub("countrynode_clicked", function(a){getCountryDetails(a.message)});
     
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
 
@@ -289,7 +289,6 @@
       <div class="span16 myWell" id='canvas-container'>
 	      <canvas id="paperCanvas" width="940" height="450"></canvas>
       </div>
-
 
 	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 450px; z-index: 5000;">
 		  <div class="row">
