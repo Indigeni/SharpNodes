@@ -109,8 +109,8 @@ function populateGraph() {
 	createEdge(pathOneName,pathThreeName,150,"black");
 	createEdge(pathOneName,pathTwoName,200,"black");
 	
-	console.log(nodes);
-	console.log(edges);
+	//console.log(nodes);
+	//console.log(edges);
 
 }
 
@@ -225,7 +225,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 		return;
 	}
 
-	console.log("creating node from image: " + type,nodeData);
+	//console.log("creating node from image: " + type,nodeData);
 
 	var text = new PointText(center+[0,radius]);
 	text.justification = "center";
@@ -245,7 +245,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 	var p1 = new Point(center.x-width/2,center.y+radius-height*2/3),
 		p2 = new Point(center.x+width/2,center.y+radius+height*1/3);
 	
-	console.log("building text container with point, size:",text.bounds.point,text.bounds.size);
+	//console.log("building text container with point, size:",text.bounds.point,text.bounds.size);
 	
 	//var textContainer = new Path.RoundRectangle(new Path.Rectangle(p1,p2),new Size(10,10));
 	var textContainer = new Path.Rectangle(p1,p2);
@@ -254,7 +254,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 	textContainer.name = pathName;
 
 
-	console.log("textContainer",textContainer);
+	//console.log("textContainer",textContainer);
 	
 	var path = null;
 	
@@ -272,7 +272,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 	
   		path = new Raster('img-for-node');
   		
-  		console.log("loaded ", path);
+  		//console.log("loaded ", path);
   		
   		path.position = center;
   		path.scale(radius*2.2/path.bounds.width);
@@ -356,7 +356,7 @@ function createNode(type, id, center, radius, color) {
 	textContainer.opacity = 0.6;
 	textContainer.name = pathName;
 	
-	console.log("inserting text above path? " + path.insertBelow(text));
+	//console.log("inserting text above path? " + path.insertBelow(text));
 	textContainer.insertBelow(text);
 	
 	//var path = null;
@@ -470,7 +470,7 @@ function createEdge(parentNodeID, childNodeID, edgeLength, color) {
 	
 	var edgePath = createEdgePath(firstNodeID, secondNodeID);
 	if(color!=null) {
-		console.log("change link color to " + color);
+		//console.log("change link color to " + color);
 		edgePath.fillColor = color;
 		edgePath.strokeColor = color;
 	}
@@ -539,13 +539,13 @@ function handleClick(where) {
 
 	var hitResult = project.hitTest(where, hitOptions);
 	
-	console.log("hit result: " + hitResult);
+	//console.log("hit result: " + hitResult);
 	
 	if(hitResult==null)
 		return null;
 	
 	var name = hitResult.item.name;
-	console.log("selected: " + name + " (index of 'edge' = " + name.indexOf(edgeType)  + ") ");
+	//console.log("selected: " + name + " (index of 'edge' = " + name.indexOf(edgeType)  + ") ");
 	if(name.indexOf(edgeType) >= 0)
 		return null;
 
@@ -555,8 +555,8 @@ function handleClick(where) {
 
 function handleNodeClick(nodeID) {
 
-	console.log("handling click for " + nodeID);
-	console.log("will send node name: " + nodes[nodeID].name);
+	//console.log("handling click for " + nodeID);
+	//console.log("will send node name: " + nodes[nodeID].name);
 
 	if(nodes[nodeID].type == siteType)
 		eventMan.pub("sitenode_clicked", {message: nodes[nodeID].name});
@@ -597,7 +597,7 @@ function addSiteNode(site) {
 		mainNode = siteNode;
 	},"grey");
 	
-	console.log("nodes with just main node",nodes);
+	//console.log("nodes with just main node",nodes);
 	
 }
 
@@ -611,7 +611,7 @@ function addCountryForSite(countryData) {
 	createNodeAsync(countryType,{name: countryData.country, 
 		flag: countryData.countryFlag},countryCenter,defaultRadius,function(countryNode) {
 	
-		console.log("adding isps for " + countryNode);
+		//console.log("adding isps for " + countryNode);
 	
 		createEdge(mainNode,countryNode,defaultLength,'LightGrey');
 		var isps = countryData.isps;
@@ -635,7 +635,7 @@ function addCountryForSite(countryData) {
 			createEdge(countryNode,leftIspsNode,defaultLength,'LightGrey');
 		}
 		
-		console.log("nodes with country " + countryNode, nodes);
+		//console.log("nodes with country " + countryNode, nodes);
 	
 	},'grey');
 	
@@ -649,7 +649,7 @@ function removeCountryForSite(country) {
 
 	var countryNode = countryType + sep + country.countryName;
 	
-	console.log(countryNode);
+	//console.log(countryNode);
 	
 	for(var ispNode in edges[countryNode]) {
 		console.log(ispNode);
@@ -674,7 +674,7 @@ function removeCountryForSite(country) {
 			nodes[countryNode].circle.remove();
 	delete nodes[countryNode];
 	
-	console.log(nodes, edges);
+	//console.log(nodes, edges);
 
 }
 
@@ -708,10 +708,10 @@ function onMouseDown(event) {
 
 function onMouseDrag(event) {
     
-    console.log("mouse drag. selected node: ", selectedNode);
+    //console.log("mouse drag. selected node: ", selectedNode);
     
     if(selectedNode!=null) {
-    	console.log("dragging " + selectedNode);
+    	//console.log("dragging " + selectedNode);
     	nodeWasDragged = true;
     	handleNodeDrag(selectedNode,event.delta);
     }
@@ -733,7 +733,7 @@ function onMouseUp(event) {
 
 	if(selectedNode!=null)
 		if(!nodeWasDragged) {
-			console.log("alright, you clicked " + selectedNode.name);
+			//console.log("alright, you clicked " + selectedNode.name);
 			handleNodeClick(selectedNode.name);
 		}
 		
