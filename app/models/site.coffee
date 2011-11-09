@@ -12,9 +12,9 @@ SiteSchema = new Schema
 SiteSchema.statics.findTopSites = (callback) ->
   this
   .where('reports')
-  .gte(10)
+  .gte(1)
   .desc('reports')
-  .limit(20)
+  .limit(100)
   .run(callback)
 
 exports.Site = mongoose.model 'Sites', SiteSchema
