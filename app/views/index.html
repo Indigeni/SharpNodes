@@ -158,7 +158,7 @@
         	  url: "/site/"+siteURL+"/country/"+countryName+"/isps",
         	  success: function(data){
         	    console.log(data);    
-        	    eventMan.pub("country_added", {country : value, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY    	    
+        	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY    	    
         	    //$(this).addClass("done");
         	  }
         	});        
