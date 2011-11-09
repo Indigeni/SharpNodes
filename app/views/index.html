@@ -39,6 +39,8 @@
        
        var score = {political:0,social:0,security:0,tools:0};
        var transparencyScore = 10;
+       var googleRemovalScore = 1;
+       
        function drawChart() {
                var data = new google.visualization.DataTable();
                data.addColumn('string', 'Theme');
@@ -65,9 +67,12 @@
                data2.addRows(3);
                data2.setValue(0, 0, 'Transp. Alert');
                data2.setValue(0, 1, transparencyScore);
+			   data2.setValue(1, 0, 'Google Removal Req.');
+			   data2.setValue(1, 1, googleRemovalScore);
+
        
                var chart2 = new google.visualization.Gauge(document.getElementById('chart_div_2'));
-               var options2 = {width: 150, height: 150, redFrom: 90, redTo: 100,
+               var options2 = {width: 350, height: 150, redFrom: 90, redTo: 100,
                          yellowFrom:75, yellowTo: 90, minorTicks: 5};
                chart2.draw(data2, options2);
                
@@ -266,6 +271,10 @@
         	    countryReport = data;
         	     score = countryReport.scores;
         	     transparencyScore = transparencyToValue(countryReport.transparency);
+        	     
+   	       	     if(countryReport.google) {
+        	     	googleRemovalScore = countryReport.google.contentRemoval.contentRemovalRequests;
+        	     }
         	     generateCountryInfoTab();  
         	    //$(this).addClass("done");
         	  }
