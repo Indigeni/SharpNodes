@@ -90,6 +90,8 @@ var centerAttractionTolerance = 50;
 var defaultRadius = 30;
 var defaultLength = 150;
 
+var maxNumberOfISPsPerCountry = 4;
+
 //--------------------
 
 // TEST STUFF
@@ -212,6 +214,8 @@ function updateNode(nodeID, delta) {
 
 function createNodeAsync(type, id, center, radius, callback, color) {
 
+	console.log("creating node from image: " + type + "," + id);
+
 	var text = new PointText(center);
 	text.justification = "center";
 	text.characterStyle = {
@@ -222,10 +226,22 @@ function createNodeAsync(type, id, center, radius, callback, color) {
 	
 	var path = null;
 	var pathName = type + sep + id;
-	var img = $("<img src='flags/ad.png' id='flag-ad' style='display: none' />");
+	text.name = pathName;
+	var imgPath = null;
+	if(type == countryType)
+		imgPath = "<img src='flags/ad.png' id='img-for-node' style='display: none' />";
+	else if (type == siteType)
+		imgPath = "<img src='http://sharpnod.es/site/" + id + "/icon' id='img-for-node' style='display: none' />";
+	var img = $(imgPath);
 	$("body").append(img);
 	img.load(function() {
-  		path = new Raster('flag-ad');
+	
+		
+	
+  		path = new Raster('img-for-node');
+  		
+  		console.log("loaded ", path);
+  		
   		path.position = center;
   		path.scale(radius*2.2/path.bounds.width);
   		path.opacity = 0.9;
@@ -266,13 +282,19 @@ function createNode(type, id, center, radius, color) {
 	}
 	path.name = pathName;
 	
+	var content = id;
+	if(type == ispType) {
+		if(content.length > 15)
+		content = content.substring(0,15) + "...";
+	}
+	
 	var text = new PointText(center);
 	text.justification = "center";
 	text.characterStyle = {
-    	fontSize: 20,
+    	fontSize: type == ispType ? 10 : 20,
     	fillColor: "red",
 	};
-	text.content = id;
+	text.content = content;
 	
 	console.log("inserting text above path? " + path.insertBelow(text));
 	
@@ -493,7 +515,14 @@ function cleanUp() {
 function addSiteNode(site) {
 
 	cleanUp();
-	mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius*1.5,"grey");
+	
+	createNodeAsync(siteType,site.siteNode,view.center,defaultRadius,function(siteNode){
+		mainNode = siteNode;
+	},"grey");
+	
+	console.log("nodes with just main node",nodes);
+	
+	//mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius*1.5,"grey");
 
 }
 
@@ -510,12 +539,14 @@ function addCountryForSite(countryData) {
 	
 		createEdge(mainNode,countryNode,defaultLength,'LightGrey');
 		var isps = countryData.isps;
-		for(var i=0; i<isps.length; i++) {
+		for(var i=0; i<Math.min(isps.length,maxNumberOfISPsPerCountry); i++) {
 			var isp = isps[i];
 			var ispNode = createNode(ispType,isp,
-				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius);
+				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius,"grey");
 			createEdge(countryNode,ispNode,defaultLength,'LightGrey');
 		}
+		
+		console.log("nodes with country " + countryNode, nodes);
 	
 	},'grey');
 	
@@ -581,7 +612,7 @@ function onMouseDown(event) {
 function onMouseDrag(event) {
     
     if(selectedNode!=null) {
-    	//console.log("dragging " + selectedNode);
+    	console.log("dragging " + selectedNode);
     	nodeWasDragged = true;
     	handleNodeDrag(selectedNode,event.delta);
     }
