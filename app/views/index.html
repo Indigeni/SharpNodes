@@ -130,7 +130,7 @@
         };
         
         
-        eventMan.sub("site_selected", function(site){console.log(site)});
+        eventMan.sub("site_selected", addSiteNode});
         eventMan.sub("sitenode_clicked", function(a){});
         eventMan.sub("country_added", function(a){});
         eventMan.sub("country_removed", function(a){});
@@ -185,7 +185,7 @@
       <div class="row">
       
       <div class="span16 myWell">
-	      <canvas id="paperCanvas" resize></canvas>
+	      <canvas id="paperCanvas" width="940" height="400"></canvas>
       </div>
 
 		<!--<div class="span12 myWell" id='waiting-view' style="text-align: center;"> 
