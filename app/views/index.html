@@ -46,7 +46,7 @@
          //   var countryTags = ['Andorra','Belgio','Bebbete','Cayman','Danimarca','Francia','Italia'];
 
             // Initialize Demo 1
-           
+           getSitesList();
             
             $("#country-data-close").click(function () {
                   $(this).hide("slide", { direction: "right" }, 500);
@@ -91,7 +91,12 @@
 		        	topSiteArray.push(data.sites[site].domain);
 		        };
 		        $("#siteField").autocomplete({
-		            source: topSiteArray
+		            source: topSiteArray,
+		            select: function(event, ui) {
+		            	//Emetto segnale sito selezionato
+		            	eventMan.pub("site_selected", {siteNode : ui.item.label});
+		            	getCountriesBySite(ui.item.label);
+		            }
 		        });
 	          }
 	        });
@@ -125,11 +130,11 @@
         };
         
         
-        eventMan.sub("site_selected", function(a){alert(a.message)});
-        eventMan.sub("sitenode_clicked", function(a){alert(a.message)});
-        eventMan.sub("country_added", function(a){alert(a.message)});
-        eventMan.sub("country_removed", function(a){alert(a.message)});
-        eventMan.sub("countrynode_clicked", function(a){alert(a.message)});
+        eventMan.sub("site_selected", function(site){console.log(site)});
+        eventMan.sub("sitenode_clicked", function(a){});
+        eventMan.sub("country_added", function(a){});
+        eventMan.sub("country_removed", function(a){});
+        eventMan.sub("countrynode_clicked", function(a){});
         
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
         
