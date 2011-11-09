@@ -47,13 +47,13 @@ for ccode in country_codes_dictionary.keys():
         record[3] = record[3].rstrip()
         record[4] = record[4].rstrip()
         record[5] = record[5].rstrip()
-        usersDataRequests = record[3] if record[3] != "" else "null"
-        usersDataRequestsPercFulfilled = record[4] if record[4] != "" else "null"
-        usersAccountsSpecified = record[5] if record[5] != "" else "null"
-        country_codes_dictionary[ccode]["googleUsersDataRequests"] = { "usersDataRequests": usersDataRequests,
-	                                                             "usersDataRequestsPercFulfilled": usersDataRequestsPercFulfilled,
-								     "usersAccountsSpecified": usersAccountsSpecified }
-
+	if record[3] == '<10': record[3] = 0
+	if record[4] == '<10': record[4] = 0
+	if record[5] == '<10': record[5] = 0
+	country_codes_dictionary[ccode]["googleUsersDataRequests"] = {}
+	if record[3] != "": country_codes_dictionary[ccode]["googleUsersDataRequests"]["usersDataRequests"] = record[3]
+	if record[4] != "": country_codes_dictionary[ccode]["googleUsersDataRequests"]["usersDataRequestsPercFulfilled"] = record[4]
+	if record[5] != "": country_codes_dictionary[ccode]["googleUsersDataRequests"]["usersAccountsSpecified"] = record[5]
 
 content_removal_requests_report = "google-content-removal-requests.csv"
 for ccode in country_codes_dictionary.keys():
@@ -66,19 +66,22 @@ for ccode in country_codes_dictionary.keys():
         record[3] = record[3].rstrip()
         record[4] = record[4].rstrip()
         record[5] = record[5].rstrip()
-        if   record[3] == "" : contentRemovalRequests = "null"
-	elif record[3] == "<10" : contentRemovalRequests = "0"
-	else: contentRemovalRequests = record[3]
-        if   record[4] == "" : contentRemovalPercFulfilled = "null"
-	elif record[4] == "<10" : contentRemovalPercFulfilled = "0"
-	else: contentRemovalPercFulfilled = record[4]
-        if   record[5] == "" : itemsRequestedForRemoval = "null"
-	elif record[5] == "<10" : itemsRequestedForRemoval = "0"
-	else: itemsRequestedForRemoval = record[5]
+	country_codes_dictionary[ccode]["googleContentRemovalRequests"] = {}
 
-        country_codes_dictionary[ccode]["googleContentRemovalRequests"] = { "contentRemovalRequests": contentRemovalRequests,
-	                                                             "contentRemovalPercFulfilled": contentRemovalPercFulfilled,
-								     "itemsRequestedForRemoval": itemsRequestedForRemoval }
+        if record[3] != "" :
+	    if record[3] == "<10" : contentRemovalRequests = "0"
+	    else:                   contentRemovalRequests = record[3]
+	    country_codes_dictionary[ccode]["googleContentRemovalRequests"]["contentRemovalRequests"]= contentRemovalRequests
+
+        if record[4] == "" :
+	    if record[4] == "<10" : contentRemovalPercFulfilled = "0"
+	    else:                   contentRemovalPercFulfilled = record[4]
+	    country_codes_dictionary[ccode]["googleContentRemovalRequests"]["contentRemovalPercFulfilled"]= contentRemovalPercFulfilled
+
+        if record[5] == "" :
+	    if record[5] == "<10" :   itemsRequestedForRemoval = "0"
+	    else:                     itemsRequestedForRemoval = record[5]
+	    country_codes_dictionary[ccode]["googleContentRemovalRequests"]["itemsRequestedForRemoval"]= itemsRequestedForRemoval
 
 struct = repr(country_codes_dictionary)
 struct = struct.replace('\'','"')
