@@ -199,8 +199,10 @@ function calculateDeltas() {
 function updateNode(nodeID, delta) {
 
 	if(selectedNode!=null)
-		if(selectedNode.name == nodeID)
+		if(selectedNode.name==nodeID)
 			return;
+			
+	//console.log("updating node: " + nodeID);
 
 	var node = nodes[nodeID].node;
 	var text = nodes[nodeID].text;
@@ -541,6 +543,10 @@ function addCountryForSite(countryData) {
 		var isps = countryData.isps;
 		for(var i=0; i<Math.min(isps.length,maxNumberOfISPsPerCountry); i++) {
 			var isp = isps[i];
+			if(isp==null)
+				continue;
+			if(isp=="null")
+				continue;
 			var ispNode = createNode(ispType,isp,
 				countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius,"grey");
 			createEdge(countryNode,ispNode,defaultLength,'LightGrey');
@@ -611,6 +617,8 @@ function onMouseDown(event) {
 
 function onMouseDrag(event) {
     
+    console.log("mouse drag. selected node: ", selectedNode);
+    
     if(selectedNode!=null) {
     	console.log("dragging " + selectedNode);
     	nodeWasDragged = true;
@@ -618,7 +626,7 @@ function onMouseDrag(event) {
     }
     else {
     	for(nodeID in nodes) {
-    		updateNode(event.delta);
+    		updateNode(nodeID,event.delta);
     		//nodes[nodeID].node.position += event.delta;
     		//nodes[nodeID].text.position += event.delta;
     	}
