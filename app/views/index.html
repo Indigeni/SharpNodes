@@ -38,7 +38,10 @@
        google.setOnLoadCallback(drawChart);      
        
        var score = {political:0,social:0,security:0,tools:0};
-       var transparencyScore = 10;
+       var transparencyScore = 1;
+       var googleRemovalScore = 1;
+       var googleUserDataRequest = 1;
+       
        function drawChart() {
                var data = new google.visualization.DataTable();
                data.addColumn('string', 'Theme');
@@ -54,7 +57,7 @@
                data.setValue(3, 1, score.tools);
            
                var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-               chart.draw(data, {width: 350, height: 240, title: 'Country OpenNet Scores',
+               chart.draw(data, {width: 340, height: 240, title: 'Country OpenNet Scores',
                                  vAxis: {title: 'Theme', titleTextStyle: {color: 'red'}}
                                 });
        
@@ -65,9 +68,11 @@
                data2.addRows(3);
                data2.setValue(0, 0, 'Transp. Alert');
                data2.setValue(0, 1, transparencyScore);
+			   data2.setValue(1, 0, 'Google Removal Req.');
+			   data2.setValue(1, 1, googleRemovalScore);
        
                var chart2 = new google.visualization.Gauge(document.getElementById('chart_div_2'));
-               var options2 = {width: 150, height: 150, redFrom: 90, redTo: 100,
+               var options2 = {width: 340, height: 150, redFrom: 90, redTo: 100,
                          yellowFrom:75, yellowTo: 90, minorTicks: 5};
                chart2.draw(data2, options2);
                
@@ -82,7 +87,7 @@
                data3.setValue(0, 1, siteReportCount);
                              
                var chart3 = new google.visualization.ColumnChart(document.getElementById('chart_div_3'));
-                       chart3.draw(data3, {width: 350, height: 240, title: 'Unreachability warnings',
+                       chart3.draw(data3, {width: 340, height: 210, title: 'Unreachability warnings',
                                          hAxis: {title: 'Herdict report', titleTextStyle: {color: 'red'}}
                                         });
                
@@ -105,6 +110,9 @@
     	  
     	  #country-info-tab, #site-info-tab {
 	    	  display: none;
+	    	  -moz-box-shadow: 3px 3px 4px #333;
+	    	  -webkit-box-shadow: 3px 3px 4px #333;
+	    	  box-shadow: 3px 3px 4px #333;
     	  }
     	  
     	  .flag {
@@ -276,6 +284,8 @@
 					return 50;
 				case "High":
 					return 20;
+				case "n/a":
+					return 1;	
 				default:
 					return 0;
 			}
@@ -289,6 +299,10 @@
         	    countryReport = data;
         	     score = countryReport.scores;
         	     transparencyScore = transparencyToValue(countryReport.transparency);
+        	     
+   	       	     if(countryReport.google) {
+        	     	googleRemovalScore = parseInt(countryReport.google.contentRemoval.contentRemovalRequests);
+        	     }
         	     generateCountryInfoTab();  
         	    //$(this).addClass("done");
         	  }
@@ -328,9 +342,11 @@
 				
 				//$('#site_screenshot').load('http://www.sharpnod.es/site/'+site.domain+'/preview');
 				
-				$('#site_screenshot').html('<img src="http://www.sharpnod.es/site/'+site.domain+'/preview" width="350"/>');
 				
-				console.log($('#site_screenshot'));
+				$('#site_screenshot').html('<img src="http://www.sharpnod.es/site/'+site.domain+'/preview" width="150"/>');
+
+				$('#site_keywords').html('pippo');
+				
 				$('#site-info-tab h3').attr('style', "background-image: url('http://"+site.domain+"/favicon.ico')");
 				$('#site-info-tab h3').html(site.domain);
 				
@@ -403,11 +419,11 @@
       </div>  
       
       <div class="span16 myWell" id='canvas-container'>
-	      <canvas id="paperCanvas" width="940" height="450"></canvas>
+	      <canvas id="paperCanvas" width="940" height="500"></canvas>
       </div>
 
 
-	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 450px; z-index: 5000;">
+	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 122px; height: 503px; z-index: 5000;">
 		  <div class="row">
 		  	<div class="span5">
 		  		<h3 id='country-title' class="flag" style="background-image: url('/flags/us.png');">
@@ -434,7 +450,7 @@
 	 </div>
 	
 	
-	 <div class="span6 offset10" id='site-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 450px; z-index: 5000;">
+	 <div class="span6 offset10" id='site-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 122px; height: 503px; z-index: 5000;">
 			  <div class="row">
 			  	<div class="span5">
 			  		<h3 id='site-title' class="flag" style="background-image: url('http://facebook.com/favicon.ico');">
@@ -446,9 +462,17 @@
 			  	</div>
 			  </div>
 	
+			  <div class="row">
+			    <div class="span3">
+			    	<div id="site_keywords"></div>
+			    </div>
+				<div class="span3">
+					<div id="site_screenshot"></div>
+			  	</div>	  
+			  </div>
+	
 			  <div id='country-chart-row' class="row">
 			  	<div class="span6">
-			  		<div id="site_screenshot"></div>
 			    	<div id="chart_div_3"></div>
 			  </div>
 			  </div>
