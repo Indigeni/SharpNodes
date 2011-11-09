@@ -27,6 +27,36 @@
 	<script type="text/javascript" src="js/superbly-tagfield.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-modal.js"></script>
 	
+	<!-- Load Google Bar Chart Core -->	
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script  type="text/javascript"> 
+	   google.load("visualization", "1", {packages:["corechart"]});
+       google.setOnLoadCallback(drawChart);      
+       
+       var score = {political:0,social:0,security:0,tools:0};
+              
+       function drawChart() {
+                   var data = new google.visualization.DataTable();
+                   data.addColumn('string', 'Theme');
+                   data.addColumn('number', 'Score');
+                   data.addRows(4);
+                   data.setValue(0, 0, 'political');
+                   data.setValue(0, 1, score.political);
+                   data.setValue(1, 0, 'social');
+                   data.setValue(1, 1, score.social);
+                   data.setValue(2, 0, 'security');
+                   data.setValue(2, 1, score.security);
+                   data.setValue(3, 0, 'tools');
+                   data.setValue(3, 1, score.tools);
+           
+                   var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+                   chart.draw(data, {width: 350, height: 240, title: 'Country OpenNet Scores',
+                                     vAxis: {title: 'Theme', titleTextStyle: {color: 'red'}}
+                                    });
+       }
+         
+    </script>
+		
 	<!-- Less styles -->
     <link rel="stylesheet/less" href="lib/bootstrap.less">
     <script src="js/less-1.1.3.min.js"></script>
@@ -39,6 +69,15 @@
     	  #canvas-container {
 	    	  display: none;
     	  }
+    	  
+    	  .flag {
+    	  	margin-left: 5px;
+    	  	background-repeat: no-repeat;
+    	  	background-position: 1px 8px;
+    	  	background-size: 20px 20px;
+    	  	padding-left: 25px;
+	   	  	color: #FFF;
+    	  }
     </style>
        
 	<!-- JQuery Imports -->
@@ -49,7 +88,8 @@
 		var siteKeywords = [];
 		var siteReportCount = 0;
 		var siteURL = "";
-		var herdictSiteReport = [];
+		var countryReport = {};
+		var herdictSiteReport = {};
 		
         $(document).ready(function() {
         
@@ -120,6 +160,7 @@
         	$.ajax({
         	  url: "/site/"+siteURL+'/countries',
         	  success: function(data){
+        	  console.log(data);
         	    countryTags = data.countries;        	    
         	    $("#contryTagfield").superblyTagField({
         	        allowNewTags: false,
@@ -149,7 +190,10 @@
         	$.ajax({
         	  url: "/country/"+countryName,
         	  success: function(data){
-        	    console.log(data);        	    
+        	    console.log(data);
+        	    countryReport = data;
+        	     score = countryReport.scores;
+        	     generateCountryInfoTab();  
         	    //$(this).addClass("done");
         	  }
         	});        
@@ -159,17 +203,25 @@
         	$.ajax({
         	  url: "/site/"+siteURL+"/country/"+countryName+"/isps",
         	  success: function(data){
-        	    console.log(data);    
         	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY 
-        	    herdictSiteReport[countryName] = data.herdict_report_count;   	    
+        	    herdictSiteReport[countryName] = data.herdict_report_count;   	
         	    //$(this).addClass("done");
         	  }
         	});        
         };
               
+        
+        function generateCountryInfoTab() {
+        
+	       	     drawChart();       
+	       	     $('#country-title').attr('style', "background-image: url('"+countryReport.flag+"')");
+	       	     $('#country-title').html(countryReport.name);
+	       	     $('#google-removal-request').html('Google Content Removal requests: ' + countryReport.google.contentRemoval.contentRemovalRequests);	  
+        };
+              
         eventMan.sub("sitenode_clicked", function(a){getSiteData(a)});
         eventMan.sub("countrynode_clicked", function(a){getCountryDetails(countryName)});
-        
+    
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
 
 
@@ -218,7 +270,8 @@
 	    	</div>
 	    </div>
 
-	    
+	   
+	  
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row">
@@ -233,30 +286,34 @@
 	      <canvas id="paperCanvas" width="940" height="400"></canvas>
       </div>
 
-		<!--<div class="span12 myWell" id='waiting-view' style="text-align: center;"> 
-			<img src="img/logo.png" style="margin-top: 30px;"/>
-			<div id='spinner' style="margin-bottom: 30px;"></div>
-			<p> Loading... </p>
-		</div>    
 
-		<div class="span4 well-no-padding" id="country-tab">
-			<div class="row">
-				<div class="span3">
-					<h3 style="margin-left: 5px;">countryname</h3>
-				</div>
-				<div class="span1" style="text-align: right;">
-					<h4 id='close-infotab' style="margin-right: 5px;">X</h4>
-				</div>
-			</div>
-		</div>-->
+	 <div class="span6 offset10" id='country-info-tab' style="position: absolute; opacity:0.8; background-color: #555; top: 118px; height: 400px; z-index: 5000;">
+		  <div class="row">
+		  	<div class="span5">
+		  		<h3 id='country-title' class="flag" style="background-image: url('/flags/us.png');">
+		  			ObjectName		  		
+		  		</h3>
+		  	</div>
+		  	<div class="span1" style="text-align: right;">
+		  		<h4 id='close-infotab' style="margin-right: 5px; color: #FFF;">X</h4>
+		  	</div>
+		  </div>
+
+		  <div class="row">
+	      	<div class="span6">
+	      		<p id='google-removal-request' style="color: #FFF; margin-left: 5px;">Google Content Removal requests: 5</p>
+			</div>  	
+		  </div>  
+		  
+		  <div id='country-chart-row' class="row">
+		  	<div class="span6">
+		    	<div id="chart_div"></div>
+		  </div>
+		  </div>
+	 </div>
+	
 		
-		
-<!--	    <div class="span4" id="country-tab" style="position: absolute; z-index: 5000;">
-    	  <div class="well-no-padding">
-      		<h3>aaaaaaaa</h3>
-	      </div>
-    	</div>-->
-    	  
+		    	  
     	  
       
       </div>
