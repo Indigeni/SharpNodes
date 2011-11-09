@@ -228,7 +228,6 @@
     
         //eventMan.pub("site_selected", {siteNode : "facebook.com"});
 
-
         $.ready(function() {
             $("#team").modal();
         });
@@ -250,8 +249,11 @@
           <ul class="nav">
           </ul>
           <ul class="nav secondary-nav">
-          	<li><a href="#" data-controls-modal="team" data-backdrop="static"
-                data-show="true">Team</a></li> 
+              <li>
+              <a href="#" data-controls-modal="team" data-backdrop="static"
+                  data-show="true">
+              <img src="/img/indigeni.png" height="16">
+                  Team</a></li> 
           </ul>
         </div>
       </div>
@@ -262,20 +264,18 @@
     
         <!-- Forms above paperscript canvas -->
     	<div class="row">
-    		<div class="span6">
+    		<div class="span-one-third">
     			<div class="input">
     				<input class="xlarge" id="siteField" name="siteField" size="30" type="text" placeholder="Type a URL" />
     			</div>	
 	    	</div>
-	    	<div class="span6 offset4">
-	    		<div class="input">
+            <div class="span-one-third"><br></div>
+	    	<div class="span-one-third">
+	    		<div class="input" >
 	    			<input class="xlarge" id="contryTagfield" name="xlInput" size="30" type="text" placeholder="Type Countries" />
 	    		</div>	
 	    	</div>
 	    </div>
-
-	   
-	  
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div class="row">
@@ -321,45 +321,73 @@
       
       </div>
      
-      <p><a class="btn primary large" id='show-infotab'>Action</a></p>
-     
+	  <div class="row">
+          <div class="span4"><br></div>
+          <div class="span10">
+              <blockquote style="height: 56px;">
+                <p style="font-size: 24px">"Information is Cheap. Meaning is Expensive"</p>
+                <br> 
+                <small>
+                    <a style="font-size: 18px;" href="http://theeuropean-magazine.com/352-dyson-george/353-evolution-and-innovation">George Dyson</a>
+                </small>
+              </blockquote>
+          </div>
+          <div class="span2"><br></div>
+      </div> 
+
 
       <!-- Example row of columns -->
       <div class="row">
         <div class="span-one-third">
-          <h2>Heading</h2>
-          <p>Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
-            <p><a class="btn primary large">Link mascherato da bottone</a></p>
-          
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>SharpNodes</h2>
+          <p>
+          SharpNod.es makes easier for you to understand the underlying information about censorship, 
+          obtainable from combined data from multiple sources.
+          Our goal is to provide a meaningful visualization capable of giving a picture of the entities of interest at a glance.
+          </p>
         </div>
         <div class="span-one-third">
-          <h2>Heading</h2>
-           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>Web Sites</h2>
+          <p>
+          Websites can be sources of empowering information and means for people communications. 
+          SharpNod.es keeps track of websites frequently reported as unreachable, dividing them 
+          into categories and showing how different countries and ISPs apply
+          censorship.
+          </p>
        </div>
         <div class="span-one-third">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn" href="#">View details &raquo;</a></p>
+          <h2>Data Sources</h2>
+          <p>
+          We aggregated data from multiple sources to show countries' 
+          behavior that has been fetched from the 
+          <a href="http://opennet.net/" target="blank">OpenNet Initiative</a> and from the 
+          <a href="http://www.google.com/transparencyreport/data/" target="blank">Google Transparency Report</a>.
+          Specific reports about unreachable websites have been retrieved from 
+          <a href="http://www.herdict.org" target="blank">Herdict</a>,
+          and websites have also been categorized by topic using keywords provided by people like you on 
+          <a href="http://delicio.us" target="blank">Delicious.com</a>.
         </div>
       </div>
 
       <footer>
       <p>&copy; <a href="#" data-controls-modal="team" data-backdrop="static"
-                data-show="true" id="copyright">Indigeni Digitali Team @ EUHackathon #h4t 2011</a></p>
+          data-show="true" id="copyright">Indigeni Digitali Team</a>
+      @ <a href="http://www.euhackathon.org">EUHackathon</a> 
+      <a href="https://twitter.com/#!/search/%23h4t" target="blank">#h4t</a> 2011</p>
       </footer>
 
       <div id="team" class="modal hide fade in">
           <div class="modal-header">
               <a href="#" class="close">x</a>
-              <h3>Indigeni Digitali Team</h3>
+              <h3>
+              <img src="/img/indigeni.png" height="24">
+                  Indigeni Digitali Team</h3>
           </div>
           <div class="model-body center" style="padding: 12px">
               <table border="0" class="zebra-striped">
                   <tr>
                       <td><img src="team/giuliano.png" alt="Giuliano Iacobelli" width="80px" /></td>
-                      <td><a href="http://www.giulianoiavobelli.com">Giuliano Iacobelli</a> <br/> <a href="">@Giuliano84</a></td>
+                      <td><a href="http://www.giulianoiacobelli.com">Giuliano Iacobelli</a> <br/> <a href="">@Giuliano84</a></td>
                   </tr>
                   <tr>
                       <td><img src="team/matteo.png" alt="Matteo Collina" width="80px" /></td>
