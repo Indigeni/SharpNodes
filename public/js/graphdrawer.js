@@ -14,6 +14,11 @@ var edgeType = "edge";
 // separator for node IDs
 var sep = "/";
 
+eventMan.sub("site_selected", function(a){addSiteNode(a)});
+eventMan.sub("country_added", function(a){addSiteNode(a)});
+eventMan.sub("country_removed", function(a){removeSiteNode(a)});
+
+
 // nodes - contains all nodes in the graph.
 // node IDs are in the form: type + sep + name.
 // object structure as follows:
