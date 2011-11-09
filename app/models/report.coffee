@@ -7,5 +7,5 @@ ReportSchema = new Schema
   isp: String
   countryName: String
   countryCode: String
-  
+
 exports.Report = mongoose.model 'Reports', ReportSchema
