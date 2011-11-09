@@ -1,10 +1,20 @@
 async = require 'async'
 Report = require("report").Report
-
+Country = require("country").Country
 
 insertData = ->
   async.parallel [
     (next) ->
+      country = new Country
+        name: 'italy'
+        flag: 'it-flag.png'
+      country.save -> next()
+    ,(next) ->
+      country = new Country
+        name: 'england'
+        flag: 'en-flag.png'
+      country.save -> next()
+    ,(next) ->
       report = new Report
         domain: 'www.google.it'
         timestamp: new Date()
@@ -63,7 +73,11 @@ describe "report controller", ->
     get "/site/www.google.it/countries", (error, response, body) ->
       expect(response.statusCode).toBe(200)
       expect(response.headers["content-type"]).toBe('application/json')
-      expect(response.body).toBe('{"countries":["italy","france","england"]}')
+      countries = JSON.parse(response.body).countries
+      expect(countries[0].name).toEqual("england")
+      expect(countries[0].flag).toEqual("en-flag.png")
+      expect(countries[1].name).toEqual("italy")
+      expect(countries[1].flag).toEqual("it-flag.png")
       done()
 
   it "GET /SITE/domain/country/countryname", ->
