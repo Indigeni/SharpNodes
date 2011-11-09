@@ -67,8 +67,8 @@ for line in fileinput.input([herdict_report]):
     month = int(date[:2])
     date = date[3:]
     day = int(date[:2])
-    timestamp = int(time.mktime(datetime.datetime(year,month,day).timetuple()))
+    timestamp = long(time.mktime(datetime.datetime(year,month,day).timetuple()))
     countryname = country_codes_dictionary.get(countrycode,'null')
 
-    print '{"domain": "%s", "ISP": "%s", "CountryCode": "%s", "CountryName": "%s", "timestamp": "%s" }' % (url, ISP, countrycode, countryname, timestamp)
+    print '{"domain": "%s", "isp": "%s", "countryCode": "%s", "countryName": "%s", "timestamp": "%s" }' % (url, ISP, countrycode, countryname, timestamp)
 
