@@ -48,6 +48,7 @@
 		var siteKeywords = [];
 		var siteReportCount = 0;
 		var siteURL = "";
+		var herdictSiteReport = [];
 		
         $(document).ready(function() {
         
@@ -158,7 +159,8 @@
         	  url: "/site/"+siteURL+"/country/"+countryName+"/isps",
         	  success: function(data){
         	    console.log(data);    
-        	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY    	    
+        	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY 
+        	    herdictSiteReport[countryName] = data.herdict_report_count;   	    
         	    //$(this).addClass("done");
         	  }
         	});        
