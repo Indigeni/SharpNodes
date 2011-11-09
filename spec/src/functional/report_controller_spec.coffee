@@ -28,6 +28,14 @@ insertData = ->
         countryName: 'england'
         countryCode: 'en'
       report.save -> next()
+    ,(next) ->
+      report = new Report
+        domain: 'www.google.it'
+        timestamp: new Date()
+        isp: 'h_telecom_2'
+        countryName: 'england'
+        countryCode: 'en'
+      report.save -> next()
     ],
     (error) ->
       fail(error) if (error)
