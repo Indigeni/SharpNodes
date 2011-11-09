@@ -378,7 +378,13 @@ function addCountryForSite(countryData) {
 
 function removeCountryForSite(country) {
 
-	// TODO
+	var countryNode = countryType + sep + country;
+	for(var ispNode in edges[countryNode])
+		edges[countryNode][ispNode].edge.remove();
+	delete edges[countryNode];
+	nodes[countryNode].node.remove();
+	nodes[countryNode].text.remove();
+	delete nodes[countryNode];
 
 }
 
