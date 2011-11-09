@@ -81,13 +81,13 @@ var hitOptions = {
 // LAYOUT ENGINE PARAMETERS
 
 var centerOfScreen = view.center; // once for all! for scrolling and stuff.
-var maxDistanceForRepulsiveCharges = 400;
-var repulsionConstant = 0.5;
-var attractionConstant = 0.005;
+var maxDistanceForRepulsiveCharges = 800;
+var repulsionConstant = 3.0;
+var attractionConstant = 0.002;
 var springConstant = 0.05;
 var centerAttractionTolerance = 50;
 var defaultRadius = 30;
-var defaultLength = 100;
+var defaultLength = 150;
 
 //--------------------
 
@@ -238,10 +238,83 @@ function createNode(type, id, center, radius, color) {
 
 }
 
+
+function getVector(radians, length) {
+    return new Point({
+        // Convert radians to degrees:
+        angle: radians * 180 / Math.PI,
+        length: length
+    });
+}
+
+function metaball(ball1, ball2, v, radius1, radius2, handle_len_rate) {
+    var center1 = ball1.position;
+    var center2 = ball2.position;
+    //var radius1 = ball1.bounds.width / 2;
+    //var radius2 = ball2.bounds.width / 2;
+    var pi2 = Math.PI / 2;
+    var d = center1.getDistance(center2);
+    var u1, u2;
+
+    if (radius1 == 0 || radius2 == 0)
+        return;
+
+    if (d <= Math.abs(radius1 - radius2)) {
+        d = 1;
+    } else if (d < radius1 + radius2) { // case circles are overlapping
+        u1 = Math.acos((radius1 * radius1 + d * d - radius2 * radius2) /
+                (2 * radius1 * d));
+        u2 = Math.acos((radius2 * radius2 + d * d - radius1 * radius1) /
+                (2 * radius2 * d));
+    } else {
+        u1 = 0;
+        u2 = 0;
+    }
+        var angle1 = (center2 - center1).getAngleInRadians();
+    var angle2 = Math.acos((radius1 - radius2) / d);
+    var angle1a = angle1 + u1 + (angle2 - u1) * v;
+    var angle1b = angle1 - u1 - (angle2 - u1) * v;
+    var angle2a = angle1 + Math.PI - u2 - (Math.PI - u2 - angle2) * v;
+    var angle2b = angle1 - Math.PI + u2 + (Math.PI - u2 - angle2) * v;
+    var p1a = center1 + getVector(angle1a, radius1);
+    var p1b = center1 + getVector(angle1b, radius1);
+    var p2a = center2 + getVector(angle2a, radius2);
+    var p2b = center2 + getVector(angle2b, radius2);
+
+    // define handle length by the distance between
+    // both ends of the curve to draw
+    var totalRadius = (radius1 + radius2);
+    var d2 = Math.min(v * handle_len_rate, (p1a - p2a).length / totalRadius);
+
+    // case circles are overlapping:
+    d2 *= Math.min(1, d * 2 / (radius1 + radius2));
+
+    radius1 *= d2;
+    radius2 *= d2;
+
+    var path = new Path([p1a, p2a, p2b, p1b]);
+    ball1.moveAbove(path);
+    ball2.moveAbove(path);
+    //path.style = ball1.style;
+    path.closed = true;
+    var segments = path.segments;
+    segments[0].handleOut = getVector(angle1a - pi2, radius1);
+    segments[1].handleIn = getVector(angle2a + pi2, radius2);
+    segments[2].handleOut = getVector(angle2b - pi2, radius2);
+    segments[3].handleIn = getVector(angle1b + pi2, radius1);
+    return path;
+}
+
+
+
 function createEdgePath(nodeID1, nodeID2) {
 
-	var p1 = nodes[nodeID1].node.position, p2 = nodes[nodeID2].node.position;
-	var path = new Path.Line(p1, p2);
+	var circle1 = nodes[nodeID1].node, circle2 = nodes[nodeID2].node;
+	var r1 = nodes[nodeID1].r, r2 = nodes[nodeID2].r;
+	var path = metaball(circle1, circle2, 0.5, r1, r2, 2.4);
+
+	//var p1 = nodes[nodeID1].node.position, p2 = nodes[nodeID2].node.position;
+	//var path = new Path.Line(p1, p2);
 	nodes[nodeID1].node.insertAbove(path);
 	nodes[nodeID2].node.insertAbove(path);
 	nodes[nodeID1].text.insertAbove(nodes[nodeID1].node);
@@ -356,24 +429,25 @@ function cleanUp() {
 function addSiteNode(site) {
 
 	cleanUp();
-	mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius,"grey");
+	mainNode = createNode(siteType,site.siteNode,view.center,defaultRadius*1.5,"grey");
 
 }
 
 function addCountryForSite(countryData) {
 
-	var countryCenter = nodes[mainNode].node.position + [1,1];
+	var countryCenter = nodes[mainNode].node.position + [Math.random()*10-5,Math.random()*10-5];
 	var countryNode = createNode(
 		countryType,countryData.country,countryCenter,defaultRadius,'grey');
 		
 	console.log(countryNode);
 	
-	createEdge(mainNode,countryNode,defaultLength,'grey');
+	createEdge(mainNode,countryNode,defaultLength,'LightGrey');
 	var isps = countryData.isps;
 	for(var i=0; i<isps.length; i++) {
 		var isp = isps[i];
-		var ispNode = createNode(ispType,isp,countryCenter + [i,i],defaultRadius);
-		createEdge(countryNode,ispNode,defaultLength,'grey');
+		var ispNode = createNode(ispType,isp,
+			countryCenter + [Math.random()*10-5,Math.random()*10-5],defaultRadius);
+		createEdge(countryNode,ispNode,defaultLength,'LightGrey');
 	}
 
 }
@@ -466,7 +540,7 @@ function onMouseUp(event) {
 
 
 
-
+var image = new Raster("<img src='flags/ad.png'/>");
 
 
 //populateGraph();
