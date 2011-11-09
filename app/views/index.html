@@ -89,6 +89,7 @@
 		var siteReportCount = 0;
 		var siteURL = "";
 		var countryReport = {};
+		var countriesFlags = {};
 		var herdictSiteReport = {};
 		
         $(document).ready(function() {
@@ -160,8 +161,11 @@
         	$.ajax({
         	  url: "/site/"+siteURL+'/countries',
         	  success: function(data){
-        	  console.log(data);
-        	    countryTags = data.countries;        	    
+        	    for (index in data.countries) {
+        	    	countryTags.push(data.countries[index].name);	
+	        	    countriesFlags[data.countries[index].name] = data.countries[index].flag;
+        	    }
+
         	    $("#contryTagfield").superblyTagField({
         	        allowNewTags: false,
         	        allowedTagsNumber: 5,                
