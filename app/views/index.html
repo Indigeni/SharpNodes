@@ -207,7 +207,7 @@
         	$.ajax({
         	  url: "/site/"+siteURL+"/country/"+countryName+"/isps",
         	  success: function(data){
-        	    eventMan.pub("country_added", {country : countryName, isps: data.isps}); //QUI HO AGGIUNTO IL COUNTRY 
+        	    eventMan.pub("country_added", {country : countryName, isps: data.isps, countryFlag : countriesFlags[countryName]}); //QUI HO AGGIUNTO IL COUNTRY 
         	    herdictSiteReport[countryName] = data.herdict_report_count;   	
         	    //$(this).addClass("done");
         	  }
