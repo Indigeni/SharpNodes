@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sharpnodes - Showing you what governments dont</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- CSS -->    
+    <link rel="stylesheet" href="css/superbly-tagfield.css" />
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+	
+	
+	<!-- Javascript Imports -->
+	<script type="text/javascript" src="js/paper.js"></script>
+	<script type="text/javascript" src="js/pubsub.js"></script>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>     
+	<script src="http://fgnass.github.com/spin.js/spin.min.js"></script>     
+	<script type="text/paperscript" src="js/graphdrawer.js "canvas="paperCanvas"></script>    
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/superbly-tagfield.min.js"></script>
+	
+	<!-- Less styles -->
+    <link rel="stylesheet/less" href="lib/bootstrap.less">
+    <script src="js/less-1.1.3.min.js"></script>
+    
+    <style type="text/css">
+    	  body {
+        	padding-top: 80px;
+    	  }
+    </style>
+       
+	<!-- JQuery Imports -->
+	<script type="text/javascript">	
+	
+		var topSiteArray = []; 
+		var countryTags = [];
+		
+        $(document).ready(function() {
+         //   var countryTags = ['Andorra','Belgio','Bebbete','Cayman','Danimarca','Francia','Italia'];
+
+            // Initialize Demo 1
+           
+            
+            $("#country-data-close").click(function () {
+                  $(this).hide("slide", { direction: "right" }, 500);
+            });
+            
+			var opts = {
+			  lines: 12, // The number of lines to draw
+			  length: 7, // The length of each line
+			  width: 3, // The line thickness
+			  radius: 10, // The radius of the inner circle
+			  color: '#000', // #rgb or #rrggbb
+			  speed: 1, // Rounds per second
+			  trail: 60, // Afterglow percentage
+			  shadow: false // Whether to render a shadow
+			};
+			var target = document.getElementById('spinner');
+			var spinner = new Spinner(opts).spin(target);
+    
+            // Start Action
+            $('#tagDemoButton1').click(function(e){
+                alert($("#contryTagfield").val());
+            });
+            
+            // Swich classes
+            $("#show-infotab").click(function(){
+    	        $("#waiting-view").removeClass("span16").addClass("span12");
+	            $("#country-tab").show();
+            });
+			
+			$("#close-infotab").click(function(){
+				 $("#country-tab").hide();
+				 $("#waiting-view").removeClass("span12").addClass("span16");
+			});
+        });
+        
+        
+        function getSitesList() {
+	        $.ajax({
+	          url: "/top_sites/",
+	          success: function(data){
+		        for (site in data.sites) {
+		        	topSiteArray.push(data.sites[site].domain);
+		        };
+		        $("#siteField").autocomplete({
+		            source: topSiteArray
+		        });
+	          }
+	        });
+        }
+        
+        function getSiteData(siteURL) {
+        	$.ajax({
+        	  url: "/site/"+siteURL,
+        	  success: function(data){
+        	    console.log(data);
+        	    //$(this).addClass("done");
+        	  }
+        	});
+        };
+        
+        function getCountriesBySite(siteURL) {
+        	$.ajax({
+        	  url: "/site/"+siteURL+'/countries',
+        	  success: function(data){
+        	    countryTags = data.countries;        	    
+        	    $("#contryTagfield").superblyTagField({
+        	        allowNewTags: false,
+        	        allowedTagsNumber: 5,                
+        	        showTagsNumber: 10,
+        	        tags: countryTags
+        	    });
+        	    
+        	    //$(this).addClass("done");
+        	  }
+        	});
+        };
+        
+        
+        eventMan.sub("site_selected", function(a){alert(a.message)});
+        eventMan.sub("sitenode_clicked", function(a){alert(a.message)});
+        eventMan.sub("country_added", function(a){alert(a.message)});
+        eventMan.sub("country_removed", function(a){alert(a.message)});
+        eventMan.sub("countrynode_clicked", function(a){alert(a.message)});
+        
+        //eventMan.pub("site_selected", {siteNode : "facebook.com"});
+        
+    </script>
+  
+    <!-- Le fav and touch icons -->
+  <!--  <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">-->
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">SharpNod.es</a>
+          <ul class="nav">
+          </ul>
+          <ul class="nav secondary-nav">
+          	<li><a href="#about">Team</a></li> 
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="container">
+    
+        <!-- Forms above paperscript canvas -->
+    	<div class="row">
+    		<div class="span6">
+    			<div class="input">
+    				<input class="xlarge" id="siteField" name="siteField" size="30" type="text" placeholder="Type a URL" />
+    			</div>	
+	    	</div>
+	    	<div class="span6 offset4">
+	    		<div class="input">
+	    			<input class="xlarge" id="contryTagfield" name="xlInput" size="30" type="text" placeholder="Type Countries" />
+	    		</div>	
+	    	</div>
+	    </div>
+
+	    
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="row">
+      
+      <div class="span16 myWell">
+	      <canvas id="paperCanvas" resize></canvas>
+      </div>
+
+		<!--<div class="span12 myWell" id='waiting-view' style="text-align: center;"> 
+			<img src="img/logo.png" style="margin-top: 30px;"/>
+			<div id='spinner' style="margin-bottom: 30px;"></div>
+			<p> Loading... </p>
+		</div>    
+
+		<div class="span4 well-no-padding" id="country-tab">
+			<div class="row">
+				<div class="span3">
+					<h3 style="margin-left: 5px;">countryname</h3>
+				</div>
+				<div class="span1" style="text-align: right;">
+					<h4 id='close-infotab' style="margin-right: 5px;">X</h4>
+				</div>
+			</div>
+		</div>-->
+		
+		
+	      <!--
+	      
+	      <div class="span12 myWell" id='waiting-view' style="text-align: center;"> 
+	      	<img src="img/logo.png" style="margin-top: 30px;"/>
+	      	<div id='spinner' style="margin-bottom: 30px;"></div>
+	      	<p> Loading... </p>
+	      </div>  
+	      
+	      <div class="span4" id="country-tab" style="position: absolute; z-index: 5000;">
+    	  	<div class="well-no-padding">
+      			<h3>aaaaaaaa</h3>
+	      	</div>
+    	  </div>
+    	  
+    	  -->
+      
+      </div>
+     
+      <p><a class="btn primary large" id='show-infotab'>Action</a></p>
+     
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="span-one-third">
+          <h2>Heading</h2>
+          <p>Etiam porta sem malesuada magna mollis euismod. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+            <p><a class="btn primary large">Link mascherato da bottone</a></p>
+          
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+        </div>
+        <div class="span-one-third">
+          <h2>Heading</h2>
+           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+       </div>
+        <div class="span-one-third">
+          <h2>Heading</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; Company 2011</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

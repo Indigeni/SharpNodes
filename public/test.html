@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/paper.js"></script>
+<script type="text/javascript" src="js/pubsub.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<!-- Load external PaperScript and associate it with myCanvas -->
+<script type="text/paperscript" src="js/test.js "canvas="myCanvas"></script>
+
+<script type="text/javascript">
+eventMan.sub("myEvent", function(a){alert(a.message)});
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+  
+	$('#testdiv').click(function() {
+		eventMan.pub("paperEvent", {message:'CHIAMO EVENTO CREATO DENTRO PAPERSCRIPT'});
+	});  
+	
+});
+</script>
+
+</head>
+<body>
+    <div id='testdiv'> AJAJAJJAJA
+
+    <canvas id="myCanvas" resize></canvas>
+    
+    
+    </div>
+    
+</body>
+</html>

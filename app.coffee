@@ -17,6 +17,7 @@ app = express.createServer()
 
 app.configure -> 
   app.register ".eco", eco
+  app.register ".html", eco
   app.set('views', __dirname + '/app/views')
   app.set('view engine', 'eco')
   app.use(express.bodyParser())
