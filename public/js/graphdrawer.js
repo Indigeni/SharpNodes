@@ -216,7 +216,7 @@ function updateNode(nodeID, delta) {
 
 function createNodeAsync(type, nodeData, center, radius, callback, color) {
 
-	console.log("creating node from image: " + type + "," + id);
+	console.log("creating node from image: " + type,nodeData);
 
 	var text = new PointText(center);
 	text.justification = "center";
@@ -233,7 +233,7 @@ function createNodeAsync(type, nodeData, center, radius, callback, color) {
 	if(type == countryType)
 		imgPath = "<img src='" + nodeData.flag + "' id='img-for-node' style='display: none' />";
 	else if (type == siteType)
-		imgPath = "<img src='http://sharpnod.es/site/" + id + "/icon' id='img-for-node' style='display: none' />";
+		imgPath = "<img src='http://sharpnod.es/site/" + nodeData.name + "/icon' id='img-for-node' style='display: none' />";
 	var img = $(imgPath);
 	$("body").append(img);
 	img.load(function() {
