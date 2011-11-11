@@ -79,6 +79,7 @@
                
                
                
+               
                var data3 = new google.visualization.DataTable();
                data3.addColumn('string', 'Label');
                data3.addColumn('number', 'Score');
@@ -206,8 +207,8 @@
 	        $.ajax({
 	          url: "/top_sites/",
 	          success: function(data){
-		        for (site in data.sites) {
-		        	topSiteArray.push(data.sites[site].domain);
+		        for (var index = 0; index < data.sites.length; index++) {
+		        	topSiteArray.push(data.sites[index].domain);
 		        };
 		      	       
 			   $('#spinner').fadeOut("slow", function() {
@@ -243,14 +244,14 @@
         	$.ajax({
         	  url: "/site/"+siteURL+'/countries',
         	  success: function(data){
-        	    for (index in data.countries) {
+        	    for (var index = 0 ; index < data.countries.length ; index ++) {
         	    	countryTags.push(data.countries[index].name);	
 	        	    countriesFlags[data.countries[index].name] = data.countries[index].flag;
         	    }
 
         	    $("#contryTagfield").superblyTagField({
         	        allowNewTags: false,
-        	        allowedTagsNumber: 5,                
+        	        allowedTagsNumber: 5,
         	        showTagsNumber: 10,
         	        tags: countryTags
         	    });
