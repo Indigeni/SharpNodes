@@ -31,7 +31,7 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start do
-    run "cd #{current_path} && NODE_ENV=production DISPLAY=:0 forever start sharpnodes.js -p #{app_port}"
+    run "cd #{current_path} && NODE_ENV=production DISPLAY=:0 forever start sharpnodes.js -p #{app_port} -d mongodb://sharpnodes:sharpnodes@ds029837.mongolab.com:29837/sharpnodes"
   end
 
   task :stop do 
