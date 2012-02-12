@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
-Site = (require 'site').Site
+Site = (require './site').Site
 
 ReportSchema = new Schema
   domain: String

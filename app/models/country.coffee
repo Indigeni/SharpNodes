@@ -1,8 +1,6 @@
 mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
-Country = (require 'country').Country
-
 CountrySchema = new Schema
   name: 
     type: String

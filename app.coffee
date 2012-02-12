@@ -32,15 +32,10 @@ app.configure 'development', ->
 app.configure 'production', ->
   app.use(express.errorHandler())
 
-require.paths.unshift("app/controllers")
-require.paths.unshift("app/models")
-
-require('home_controller')(app)
-require('site_controller')(app)
-require('report_controller')(app)
-require('country_controller')(app)
-
-require 'site'
+require('./app/controllers/home_controller')(app)
+require('./app/controllers/site_controller')(app)
+require('./app/controllers/report_controller')(app)
+require('./app/controllers/country_controller')(app)
 
 # Helpers
 

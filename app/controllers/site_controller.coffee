@@ -1,5 +1,5 @@
 
-Site = require("site").Site
+Site = require("../models/site").Site
 
 sys = require('sys')
 child_process = require('child_process')
@@ -9,8 +9,7 @@ fs = require('fs')
 
 runExternal = (command, args=[], callback) ->
   console.log("Running #{command} #{args.join(" ")}")
-  child = child_process.spawn(command, args,
-    customFds: [process.stdin, process.stdout, process.stderr])
+  child = child_process.spawn(command, args)
   child.on('exit', callback) if callback?
 
 fetchImage = (width, length, req, res, buildParams) ->

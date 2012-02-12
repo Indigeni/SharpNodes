@@ -1,6 +1,6 @@
 
-Report = require("report").Report
-Country = require("country").Country
+Report = require("../models/report").Report
+Country = require("../models/country").Country
 _ = require 'underscore'
 
 module.exports = (app) ->

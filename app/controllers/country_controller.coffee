@@ -1,5 +1,5 @@
 
-Country = require("country").Country
+Country = require("../models/country").Country
 
 module.exports = (app) ->
   app.get '/country/:name', (req, res) ->
