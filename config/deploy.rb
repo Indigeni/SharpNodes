@@ -5,7 +5,7 @@ set :repository,  "git@github.com:Indigeni/SharpNodes.git"
 set :scm, :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-ip = "178.79.185.173"
+ip = "callisto.matteocollina.com"
 
 role :web, ip 
 role :app, ip
@@ -15,7 +15,7 @@ set :user, "deploy"
 
 set :use_sudo, false
 
-set :app_port, 8000
+set :app_port, 8100
 
 # support for github
 ssh_options[:forward_agent] = true
@@ -31,7 +31,7 @@ set :normalize_asset_timestamps, false
 
 namespace :deploy do
   task :start do
-    run "cd #{current_path} && DISPLAY=:0 forever start app.js -p #{app_port}"
+    run "cd #{current_path} && NODE_ENV=production DISPLAY=:0 forever start sharpnodes.js -p #{app_port}"
   end
 
   task :stop do 

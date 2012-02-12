@@ -33,13 +33,13 @@ var MONGO = {
 
 desc("Start the app on port 3000")
 task({"start": []}, function() {
-  var app = require('./app.coffee');
+  var app = require('./sharpnodes.coffee');
   app.start({ "port": 3000 });
 })
 
 desc("Start the app for the tests")
 task({"tests-start": []}, function() {
-  var app = require('./app.coffee');
+  var app = require('./sharpnodes.coffee');
   app.start({ "port": 3000, "db": 'mongodb://localhost/sharpnodes_test' });
 })
 
