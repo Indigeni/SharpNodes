@@ -46,9 +46,11 @@ for helper in fs.readdirSync(helpersPath)
 # Start the module if it's needed
 
 optionParser = optimist.default('port', 3000).
-  usage("Usage: $0 [-p PORT]").
+  usage("Usage: $0 [-p PORT] [-d DB]").
   alias('port', 'p').
   describe('port', 'The port the server will listen to').
+  describe('db', 'The MongoDB database to connect to').
+  alias('db', 'd').
   boolean("help").
   describe("help", "This help")
 
@@ -57,7 +59,7 @@ argv = optionParser.argv
 default_db = 'mongodb://localhost/sharpnodes'
 
 start = module.exports.start = (opts={}) ->
-  db = opts.db || default_db
+  db = opts.db || argv.db || default_db
   port = opts.port || argv.port
 
   if argv.help
